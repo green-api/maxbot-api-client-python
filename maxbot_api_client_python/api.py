@@ -1,4 +1,5 @@
-from maxbot_api_client_python import Client, Config, tools
+from .client import Client, Config
+from . import tools
 
 class API:
     def __init__(self, cfg: Config):
