@@ -1,9 +1,5 @@
-import logging
 from maxbot_api_client_python.api import API, Config
-from maxbot_api_client_python.types.models import *
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-log = logging.getLogger(__name__)
+from maxbot_api_client_python.types.models import SendMessageReq
 
 def main():
     try:
@@ -14,16 +10,16 @@ def main():
             timeout=30
         ))
     except ValueError as e:
-        log.error(f"Initialization error: {e}")
+        print(f"Initialization error: {e}")
         return
     try:
         bot.messages.SendMessage(SendMessageReq(
         user_id=1234567890,
         text="Hello world!"
     ))
-        log.info("SendMessage success!")
+        print("SendMessage success!")
     except Exception as e:
-        log.error(f"SendMessage error: {e}")
+        print(f"SendMessage error: {e}")
     finally:
         bot.close()
         

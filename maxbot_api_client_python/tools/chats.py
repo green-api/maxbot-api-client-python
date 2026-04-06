@@ -1,12 +1,12 @@
 from maxbot_api_client_python.client import Client, decode, adecode
 from maxbot_api_client_python.types.constants import Paths
-from maxbot_api_client_python.types.models import *
+from maxbot_api_client_python.types import models
 
 class Chats:
     def __init__(self, client: Client):
         self.client = client
 
-    def GetChats(self, req: GetChatsReq) -> GetChatsResp:
+    def GetChats(self, req: models.GetChatsReq) ->  models.GetChatsResp:
         """
         Returns information about chats that the bot participated in: a result list and a marker pointing to the next page.
 
@@ -15,9 +15,9 @@ class Chats:
                 count=20
             ))
         """
-        return decode(self.client, "GET", Paths.CHATS, GetChatsResp, query=req.model_dump(exclude_none=True))
+        return decode(self.client, "GET", Paths.CHATS,  models.GetChatsResp, query=req.model_dump(exclude_none=True))
 
-    def GetChat(self, req: GetChatReq) -> ChatInfo:
+    def GetChat(self, req:  models.GetChatReq) ->  models.ChatInfo:
         """
         Returns info about a specific chat.
 
@@ -27,9 +27,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ID.format(req.chat_id)
-        return decode(self.client, "GET", path, ChatInfo)
+        return decode(self.client, "GET", path,  models.ChatInfo)
 
-    def EditChat(self, req: EditChatReq) -> ChatInfo:
+    def EditChat(self, req:  models.EditChatReq) ->  models.ChatInfo:
         """
         Modifies the properties of a chat, such as its title, icon, or notification settings.
 
@@ -41,9 +41,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ID.format(req.chat_id)
-        return decode(self.client, "PATCH", path, ChatInfo, payload=req)
+        return decode(self.client, "PATCH", path,  models.ChatInfo, payload=req)
 
-    def DeleteChat(self, req: DeleteChatReq) -> SimpleQueryResult:
+    def DeleteChat(self, req:  models.DeleteChatReq) ->  models.SimpleQueryResult:
         """
         Permanently deletes a chat for the bot.
 
@@ -53,9 +53,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ID.format(req.chat_id)
-        return decode(self.client, "DELETE", path, SimpleQueryResult)
+        return decode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    def SendAction(self, req: SendActionReq) -> SimpleQueryResult:
+    def SendAction(self, req:  models.SendActionReq) ->  models.SimpleQueryResult:
         """
         Broadcasts a temporary status action (e.g., "typing...", "recording video...") to the chat participants.
 
@@ -66,9 +66,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ACTIONS.format(req.chat_id)
-        return decode(self.client, "POST", path, SimpleQueryResult, payload=req)
+        return decode(self.client, "POST", path,  models.SimpleQueryResult, payload=req)
 
-    def GetPinnedMessage(self, req: GetPinnedMessageReq) -> Message:
+    def GetPinnedMessage(self, req:  models.GetPinnedMessageReq) ->  models.Message:
         """
         Retrieves the currently pinned message in the specified chat.
 
@@ -78,9 +78,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_PIN.format(req.chat_id)
-        return decode(self.client, "GET", path, Message)
+        return decode(self.client, "GET", path,  models.Message)
 
-    def PinMessage(self, req: PinMessageReq) -> SimpleQueryResult:
+    def PinMessage(self, req:  models.PinMessageReq) ->  models.SimpleQueryResult:
         """
         Pins a specific message in the chat.
         You can optionally specify whether to notify chat members about the new pinned message.
@@ -93,9 +93,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_PIN.format(req.chat_id)
-        return decode(self.client, "PUT", path, SimpleQueryResult, payload=req)
+        return decode(self.client, "PUT", path,  models.SimpleQueryResult, payload=req)
 
-    def UnpinMessage(self, req: UnpinMessageReq) -> SimpleQueryResult:
+    def UnpinMessage(self, req:  models.UnpinMessageReq) ->  models.SimpleQueryResult:
         """
         Removes the pinned message from the specified chat.
 
@@ -105,9 +105,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_PIN.format(req.chat_id)
-        return decode(self.client, "DELETE", path, SimpleQueryResult)
+        return decode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    def GetChatMembership(self, req: GetChatMembershipReq) -> ChatMember:
+    def GetChatMembership(self, req:  models.GetChatMembershipReq) ->  models.ChatMember:
         """
         Returns chat membership info for the current bot.
 
@@ -117,9 +117,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
-        return decode(self.client, "GET", path, ChatMember)
+        return decode(self.client, "GET", path,  models.ChatMember)
 
-    def LeaveChat(self, req: LeaveChatReq) -> SimpleQueryResult:
+    def LeaveChat(self, req:  models.LeaveChatReq) ->  models.SimpleQueryResult:
         """
         Removes the bot from chat members.
 
@@ -129,9 +129,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
-        return decode(self.client, "DELETE", path, SimpleQueryResult)
+        return decode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    def GetChatAdmins(self, req: GetChatAdminsReq) -> GetChatAdminsResp:
+    def GetChatAdmins(self, req:  models.GetChatAdminsReq) ->  models.GetChatAdminsResp:
         """
         Retrieves a list of administrators for the specified group chat.
 
@@ -141,9 +141,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
-        return decode(self.client, "GET", path, GetChatAdminsResp)
+        return decode(self.client, "GET", path,  models.GetChatAdminsResp)
 
-    def SetChatAdmins(self, req: SetChatAdminsReq) -> SimpleQueryResult:
+    def SetChatAdmins(self, req:  models.SetChatAdminsReq) ->  models.SimpleQueryResult:
         """
         Assigns administrator rights to specific users in a group chat.
 
@@ -157,9 +157,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
-        return decode(self.client, "POST", path, SimpleQueryResult, payload=req)
+        return decode(self.client, "POST", path,  models.SimpleQueryResult, payload=req)
 
-    def DeleteAdmin(self, req: DeleteAdminReq) -> SimpleQueryResult:
+    def DeleteAdmin(self, req:  models.DeleteAdminReq) ->  models.SimpleQueryResult:
         """
         Revokes administrator rights from a specific user in a group chat.
 
@@ -170,9 +170,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ADMIN_ID.format(req.chat_id, req.user_id)
-        return decode(self.client, "DELETE", path, SimpleQueryResult)
+        return decode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    def GetChatMembers(self, req: GetChatMembersReq) -> GetChatAdminsResp:
+    def GetChatMembers(self, req:  models.GetChatMembersReq) ->  models.GetChatAdminsResp:
         """
         Returns users participated in the chat.
 
@@ -183,9 +183,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
-        return decode(self.client, "GET", path, GetChatAdminsResp, query=req.model_dump(exclude_none=True))
+        return decode(self.client, "GET", path,  models.GetChatAdminsResp, query=req.model_dump(exclude_none=True))
 
-    def AddMembers(self, req: AddMembersReq) -> AddMembersResp:
+    def AddMembers(self, req:  models.AddMembersReq) ->  models.AddMembersResp:
         """
         Adds one or more users to a group chat.
 
@@ -196,9 +196,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
-        return decode(self.client, "POST", path, AddMembersResp, payload=req)
+        return decode(self.client, "POST", path,  models.AddMembersResp, payload=req)
 
-    def DeleteMember(self, req: DeleteMemberReq) -> SimpleQueryResult:
+    def DeleteMember(self, req:  models.DeleteMemberReq) ->  models.SimpleQueryResult:
         """
         Removes a specific user from a group chat.
         You can optionally block the user from rejoining.
@@ -211,9 +211,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
-        return decode(self.client, "DELETE", path, SimpleQueryResult, query=req.model_dump(exclude_none=True))
+        return decode(self.client, "DELETE", path,  models.SimpleQueryResult, query=req.model_dump(exclude_none=True))
 
-    async def GetChatsAsync(self, req: GetChatsReq) -> GetChatsResp:
+    async def GetChatsAsync(self, req:  models.GetChatsReq) ->  models.GetChatsResp:
         """
         Async version of GetChats.
 
@@ -222,9 +222,9 @@ class Chats:
                 count=20
             ))
         """
-        return await adecode(self.client, "GET", Paths.CHATS, GetChatsResp, query=req.model_dump(exclude_none=True))
+        return await adecode(self.client, "GET", Paths.CHATS,  models.GetChatsResp, query=req.model_dump(exclude_none=True))
 
-    async def GetChatAsync(self, req: GetChatReq) -> ChatInfo:
+    async def GetChatAsync(self, req:  models.GetChatReq) ->  models.ChatInfo:
         """
         Async version of GetChat.
 
@@ -234,9 +234,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ID.format(req.chat_id)
-        return await adecode(self.client, "GET", path, ChatInfo)
+        return await adecode(self.client, "GET", path,  models.ChatInfo)
 
-    async def EditChatAsync(self, req: EditChatReq) -> ChatInfo:
+    async def EditChatAsync(self, req:  models.EditChatReq) ->  models.ChatInfo:
         """
         Async version of EditChat.
 
@@ -247,9 +247,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ID.format(req.chat_id)
-        return await adecode(self.client, "PATCH", path, ChatInfo, payload=req)
+        return await adecode(self.client, "PATCH", path,  models.ChatInfo, payload=req)
 
-    async def DeleteChatAsync(self, req: DeleteChatReq) -> SimpleQueryResult:
+    async def DeleteChatAsync(self, req:  models.DeleteChatReq) ->  models.SimpleQueryResult:
         """
         Async version of DeleteChat.
 
@@ -259,9 +259,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ID.format(req.chat_id)
-        return await adecode(self.client, "DELETE", path, SimpleQueryResult)
+        return await adecode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    async def SendActionAsync(self, req: SendActionReq) -> SimpleQueryResult:
+    async def SendActionAsync(self, req:  models.SendActionReq) ->  models.SimpleQueryResult:
         """
         Async version of SendAction.
 
@@ -272,9 +272,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_ACTIONS.format(req.chat_id)
-        return await adecode(self.client, "POST", path, SimpleQueryResult, payload=req)
+        return await adecode(self.client, "POST", path,  models.SimpleQueryResult, payload=req)
 
-    async def GetPinnedMessageAsync(self, req: GetPinnedMessageReq) -> Message:
+    async def GetPinnedMessageAsync(self, req:  models.GetPinnedMessageReq) ->  models.Message:
         """
         Async version of GetPinnedMessage.
 
@@ -284,9 +284,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_PIN.format(req.chat_id)
-        return await adecode(self.client, "GET", path, Message)
+        return await adecode(self.client, "GET", path,  models.Message)
 
-    async def PinMessageAsync(self, req: PinMessageReq) -> SimpleQueryResult:
+    async def PinMessageAsync(self, req:  models.PinMessageReq) ->  models.SimpleQueryResult:
         """
         Async version of PinMessage.
 
@@ -297,9 +297,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_PIN.format(req.chat_id)
-        return await adecode(self.client, "PUT", path, SimpleQueryResult, payload=req)
+        return await adecode(self.client, "PUT", path,  models.SimpleQueryResult, payload=req)
 
-    async def UnpinMessageAsync(self, req: UnpinMessageReq) -> SimpleQueryResult:
+    async def UnpinMessageAsync(self, req:  models.UnpinMessageReq) ->  models.SimpleQueryResult:
         """
         Async version of UnpinMessage.
 
@@ -309,9 +309,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_PIN.format(req.chat_id)
-        return await adecode(self.client, "DELETE", path, SimpleQueryResult)
+        return await adecode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    async def GetChatMembershipAsync(self, req: GetChatMembershipReq) -> ChatMember:
+    async def GetChatMembershipAsync(self, req:  models.GetChatMembershipReq) ->  models.ChatMember:
         """
         Async version of GetChatMembership.
 
@@ -321,9 +321,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
-        return await adecode(self.client, "GET", path, ChatMember)
+        return await adecode(self.client, "GET", path,  models.ChatMember)
 
-    async def LeaveChatAsync(self, req: LeaveChatReq) -> SimpleQueryResult:
+    async def LeaveChatAsync(self, req:  models.LeaveChatReq) ->  models.SimpleQueryResult:
         """
         Async version of LeaveChat.
 
@@ -333,9 +333,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
-        return await adecode(self.client, "DELETE", path, SimpleQueryResult)
+        return await adecode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    async def GetChatAdminsAsync(self, req: GetChatAdminsReq) -> GetChatAdminsResp:
+    async def GetChatAdminsAsync(self, req:  models.GetChatAdminsReq) ->  models.GetChatAdminsResp:
         """
         Async version of GetChatAdmins.
 
@@ -345,9 +345,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
-        return await adecode(self.client, "GET", path, GetChatAdminsResp)
+        return await adecode(self.client, "GET", path,  models.GetChatAdminsResp)
 
-    async def SetChatAdminsAsync(self, req: SetChatAdminsReq) -> SimpleQueryResult:
+    async def SetChatAdminsAsync(self, req:  models.SetChatAdminsReq) ->  models.SimpleQueryResult:
         """
         Async version of SetChatAdmins.
 
@@ -358,9 +358,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
-        return await adecode(self.client, "POST", path, SimpleQueryResult, payload=req)
+        return await adecode(self.client, "POST", path,  models.SimpleQueryResult, payload=req)
 
-    async def DeleteAdminAsync(self, req: DeleteAdminReq) -> SimpleQueryResult:
+    async def DeleteAdminAsync(self, req:  models.DeleteAdminReq) ->  models.SimpleQueryResult:
         """
         Async version of DeleteAdmin.
 
@@ -371,9 +371,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS_ADMIN_ID.format(req.chat_id, req.user_id)
-        return await adecode(self.client, "DELETE", path, SimpleQueryResult)
+        return await adecode(self.client, "DELETE", path,  models.SimpleQueryResult)
 
-    async def GetChatMembersAsync(self, req: GetChatMembersReq) -> GetChatAdminsResp:
+    async def GetChatMembersAsync(self, req:  models.GetChatMembersReq) ->  models.GetChatAdminsResp:
         """
         Async version of GetChatMembers.
 
@@ -384,9 +384,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
-        return await adecode(self.client, "GET", path, GetChatAdminsResp, query=req.model_dump(exclude_none=True))
+        return await adecode(self.client, "GET", path,  models.GetChatAdminsResp, query=req.model_dump(exclude_none=True))
 
-    async def AddMembersAsync(self, req: AddMembersReq) -> AddMembersResp:
+    async def AddMembersAsync(self, req:  models.AddMembersReq) ->  models.AddMembersResp:
         """
         Async version of AddMembers.
 
@@ -397,9 +397,9 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
-        return await adecode(self.client, "POST", path, AddMembersResp, payload=req)
+        return await adecode(self.client, "POST", path,  models.AddMembersResp, payload=req)
 
-    async def DeleteMemberAsync(self, req: DeleteMemberReq) -> SimpleQueryResult:
+    async def DeleteMemberAsync(self, req:  models.DeleteMemberReq) ->  models.SimpleQueryResult:
         """
         Async version of DeleteMember.
 
@@ -410,4 +410,4 @@ class Chats:
             ))
         """
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
-        return await adecode(self.client, "DELETE", path, SimpleQueryResult, query=req.model_dump(exclude_none=True))
+        return await adecode(self.client, "DELETE", path, models.SimpleQueryResult, query=req.model_dump(exclude_none=True))

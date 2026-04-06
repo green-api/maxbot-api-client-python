@@ -1,10 +1,6 @@
-import logging
 from maxbot_api_client_python.api import API, Config
-from maxbot_api_client_python.types.models import *
+from maxbot_api_client_python.types.models import UploadFileReq, SendMessageReq
 from maxbot_api_client_python.utils import attach_image
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-log = logging.getLogger(__name__)
 
 def main():
     try:
@@ -15,7 +11,7 @@ def main():
             timeout=30
         ))
     except ValueError as e:
-        log.error(f"Initialization error: {e}")
+        print(f"Initialization error: {e}")
         return
     
     target_user_id=123456789  # recipient user ID
@@ -30,10 +26,10 @@ def main():
                 user_id=target_user_id,
                 attachments=[attach_image(token=file_info.token)]
             ))
-            log.info("File successfully sent to chat!")
+            print("File successfully sent to chat!")
 
     except Exception as e:
-        log.error(f"Error: {e}")
+        print(f"Error: {e}")
     finally:
         bot.close()
         

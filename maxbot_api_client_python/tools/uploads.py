@@ -6,7 +6,7 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from maxbot_api_client_python.client import Client, decode
 from maxbot_api_client_python.types.constants import Paths, UploadType
-from maxbot_api_client_python.types.models import *
+from maxbot_api_client_python.types.models import UploadedInfo, UploadFileReq, PhotoAttachmentRequestPayload
 
 class Uploads:
     def __init__(self, client: Client):
@@ -32,16 +32,20 @@ class Uploads:
         init_resp = self.get_upload_url(req.type)
         
         if init_resp.url:
+            if not req.file_path:
+                raise ValueError("file_path must be provided for multipart uploads.")
+                
             multipart_resp = self.upload_multipart(init_resp.url, req.file_path)
 
-            if multipart_resp and multipart_resp.token:
-                return multipart_resp
-
-            if multipart_resp and multipart_resp.photos:
-                first_photo = next(iter(multipart_resp.photos.values()), None)
-                if first_photo and first_photo.token:
-                    multipart_resp.token = first_photo.token
+            if multipart_resp:
+                if multipart_resp.token:
                     return multipart_resp
+
+                if multipart_resp.photos:
+                    first_photo = next(iter(multipart_resp.photos.values()), None)
+                    if first_photo and first_photo.token:
+                        multipart_resp.token = first_photo.token
+                        return multipart_resp
 
         if init_resp.token:
             return UploadedInfo(token=init_resp.token)
@@ -60,7 +64,7 @@ class Uploads:
                 files = {"file": (path.name, f)}
                 return decode(self.client, "POST", upload_url, UploadedInfo, files=files)
         except OSError as e:
-            Client.logger.error(f"Failed to read file for upload: {e}")
+            print(f"Failed to read file for upload: {e}")
             return None
 
     async def UploadFileAsync(self, req: UploadFileReq) -> UploadedInfo:

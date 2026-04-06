@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Optional, List
-from .types import AttachmentType, Attachment, PhotoAttachmentPayload, VideoAttachmentPayload, AudioAttachmentPayload, FileAttachmentPayload, StickerAttachmentPayload, ContactAttachmentPayload, KeyboardButton, Keyboard, ShareAttachmentPayload
+from maxbot_api_client_python.types.models import AttachmentType, Attachment, PhotoAttachmentPayload, VideoAttachmentPayload, AudioAttachmentPayload, FileAttachmentPayload, StickerAttachmentPayload, ContactAttachmentPayload, KeyboardButton, Keyboard, ShareAttachmentPayload
 
 def attach_image(token: Optional[str] = None, url: Optional[str] = None) -> Attachment:
     return Attachment(

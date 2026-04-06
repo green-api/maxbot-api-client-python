@@ -30,7 +30,12 @@ def get_exception_for_status(status_code: int) -> type[MaxBotException]:
 
 def HandleErrorResponse(response: httpx.Response, body: bytes) -> Exception:
     status_code = response.status_code
-    body_str = body.decode('utf-8', errors='ignore')
+    
+    try:
+        body_str = body.decode('utf-8')
+    except UnicodeDecodeError as e:
+        print(f"Failed to decode error response body as UTF-8 (status {status_code}): {e}")
+        body_str = body.decode('utf-8', errors='replace')
 
     ExceptionClass = get_exception_for_status(status_code)
     

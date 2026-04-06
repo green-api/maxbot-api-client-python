@@ -31,7 +31,7 @@ response = bot.chats.EditChat(EditChatReq(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.EditChatASync(EditChatReq(
+response = await bot.chats.EditChatAsync(EditChatReq(
     chat_id=123456789,
     title="Новое название группы",
     notify=False

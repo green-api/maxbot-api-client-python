@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import Optional, List, Dict, Any
 from pydantic import BaseModel, Field, ConfigDict
-from .constants import (
+from maxbot_api_client_python.types.constants import (
     AttachmentType, ChatType, ChatStatus, MarkupType, Format, UpdateType,
     LinkedMessageType, SenderAction, ChatAdminPermission, ButtonType, UploadType
 )
@@ -179,14 +179,14 @@ class Chat(MaxBotModel):
     title: Optional[str] = None
     icon: Optional[Image] = None
     last_event_time: int
-    participants_count: int
+    participants_count: Optional[int] = None
     owner_id: Optional[int] = None
     participants: Optional[Dict[str, int]] = None
     is_public: bool
     link: Optional[str] = None
     description: Optional[str] = None
     dialog_with_user: Optional[DialogWithUser] = None
-    chat_message_id: str
+    chat_message_id: Optional[str] = None
     pinned_message: Optional[Message] = None
 
 class ChatInfo(MaxBotModel):
@@ -245,7 +245,7 @@ class Update(MaxBotModel):
     update_type: UpdateType
     timestamp: int
     callback: Optional[Callback] = None
-    message: Message
+    message: Optional[Message] = None
     message_id: Optional[str] = None
     chat_id: Optional[int] = None
     user_id: Optional[int] = None

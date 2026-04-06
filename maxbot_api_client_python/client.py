@@ -1,7 +1,7 @@
 import time, json, asyncio, httpx, threading, logging
 from functools import wraps
 from urllib.parse import urljoin
-from .exceptions import HandleErrorResponse
+from maxbot_api_client_python.exceptions import HandleErrorResponse
 from typing import Optional, Dict, Any, Type, TypeVar
 
 T = TypeVar("T")
@@ -25,11 +25,13 @@ class RateLimiter:
         if self.interval <= 0:
             return
 
+        delay = 0.0
+
         with self._lock:
             now = time.time()
             elapsed = now - self.last_request_time
             delay = max(0.0, self.interval - elapsed)
-            self.last_request_time = now + delay 
+            self.last_request_time = now + delay
             
         if delay > 0:
             time.sleep(delay)
@@ -148,11 +150,13 @@ class Client:
         try:
             parsed_json = json.loads(data)
         except json.JSONDecodeError:
-            log.error(f"Server returned non-JSON response: {data[:100]}")
+            decoded_snippet = data[:100].decode('utf-8', errors='replace')
+            print(f"Server returned non-JSON response: {decoded_snippet}")
             return model_class()
 
-        if hasattr(model_class, "model_validate"):
-            return model_class.model_validate(parsed_json)
+        validate_func = getattr(model_class, "model_validate", None)
+        if validate_func:
+            return validate_func(parsed_json)
         return parsed_json
     
 def decode[T](client: Client, method: str, path: str, model_class: Type[T], **kwargs) -> T:

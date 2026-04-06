@@ -1,9 +1,7 @@
-import asyncio, logging
+import asyncio
 from maxbot_api_client_python.api import API, Config
 from maxbot_api_client_python.types.models import SendFileReq
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-log = logging.getLogger(__name__)
 
 async def main():
     try:
@@ -14,21 +12,21 @@ async def main():
             timeout=30
         ))
     except ValueError as e:
-        log.error(f"Initialization error: {e}")
+        print(f"Initialization error: {e}")
         return
 
     target_user_id = 123456789 # recipient user ID
 
     try:
         response = await bot.helpers.SendFileAsync(SendFileReq(
-            chat_id=target_user_id,
+            user_id=target_user_id,
             text="Check this!",
             file_source="https://http.cat/200.jpg"
         ))
-        log.info(f"SendFileAsync success! Message ID: {response.message_id}") if response else log.error("SendFileAsync failed to process the file.")
+        print(f"SendFileAsync success!") if response else print("SendFileAsync failed to process the file.")
 
     except Exception as e:
-        log.error(f"SendFileAsync error: {e}")
+        print(f"SendFileAsync error: {e}")
     finally:
         await bot.aclose()
 

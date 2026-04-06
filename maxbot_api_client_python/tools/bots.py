@@ -1,7 +1,6 @@
 from maxbot_api_client_python.client import Client, decode, adecode
 from maxbot_api_client_python.types.constants import Paths
-from maxbot_api_client_python.types.models import *
-
+from maxbot_api_client_python.types.models import BotInfo, BotPatch
 class Bots:
     def __init__(self, client: Client):
         self.client = client

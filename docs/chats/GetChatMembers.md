@@ -29,7 +29,7 @@ response = bot.chats.GetChatMembers(GetChatMembersReq(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatMembersASync(GetChatMembersReq(
+response = await bot.chats.GetChatMembersAsync(GetChatMembersReq(
     chat_id=123456789,
     count=50
 ))
