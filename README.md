@@ -32,7 +32,7 @@ python --version
 **Установите библиотеку:**
 
 ```bash
-pip install -e .
+pip install maxbot-api-client-python
 ```
 
 **Импорт:**
