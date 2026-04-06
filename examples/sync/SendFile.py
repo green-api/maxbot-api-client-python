@@ -19,7 +19,7 @@ def main():
             text="Check this!",
             file_source="https://http.cat/200.jpg"
         ))
-        print(f"SendFile success! Message ID: {response.message_id}") if response else print("SendFile failed to process the file.")
+        print(f"SendFile success!") if response else print("SendFile failed to process the file.")
             
     except Exception as e:
         print(f"SendFile error: {e}")
