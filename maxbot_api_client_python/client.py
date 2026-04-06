@@ -31,7 +31,7 @@ class RateLimiter:
             now = time.time()
             elapsed = now - self.last_request_time
             delay = max(0.0, self.interval - elapsed)
-            self.last_request_time = now + delay
+            self.last_request_time = now + delay 
             
         if delay > 0:
             time.sleep(delay)

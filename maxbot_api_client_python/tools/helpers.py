@@ -16,6 +16,22 @@ class Helpers:
     def SendFile(self, req: SendFileReq) -> Optional[Message]:
         """
         A helper that simplifies sending files to a chat.
+        It automatically determines whether the provided file_source is a direct URL or a local file path.
+
+        Example:
+            # Sending a file via URL:
+            response = api.helpers.SendFile(SendFileReq(
+                chat_id=123456789,
+                text="Check out this image!",
+                file_source="https://example.com/image.png"
+            ))
+
+            # Sending a local file:
+            response = api.helpers.SendFile(SendFileReq(
+                chat_id=123456789,
+                text="Here is the report.",
+                file_source="/local/path/to/report.pdf"
+            ))
         """
         if self._is_url(req.file_source):
             return self.sendFileByUrl(req)
@@ -88,6 +104,14 @@ class Helpers:
     async def SendFileAsync(self, req: SendFileReq) -> Optional[Message]:
         """
         Async version of SendFile.
+
+        Example:
+        # Sending a local file asynchronously:
+        response = await api.helpers.SendFileAsync(SendFileReq(
+            chat_id=123456789,
+            text="Here is the report.",
+            file_source="/local/path/to/report.pdf"
+        ))
         """
         if self._is_url(req.file_source):
             return await self.sendFileByUrlAsync(req)
