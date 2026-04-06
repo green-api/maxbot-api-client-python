@@ -1,6 +1,6 @@
 import asyncio, logging
 from maxbot_api_client_python.api import API, Config
-from maxbot_api_client_python.types.models import *
+from maxbot_api_client_python.types import models
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 log = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ async def main():
     target_user_id = 123456789 # recipient user ID
 
     try:
-        await bot.messages.SendMessageAsync(SendMessageReq(
+        await bot.messages.SendMessageAsync(models.SendMessageReq(
             user_id=target_user_id,
             text="Hello world!"
         ))
