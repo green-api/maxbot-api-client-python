@@ -48,11 +48,11 @@ class RateLimiter:
             await asyncio.sleep(delay)
 
 class Config:
-    def __init__(self, base_url: str, token: str, timeout: int = 35, global_rps: int = 25, max_retries: int = 3, retry_delay_sec: int = 3):
+    def __init__(self, base_url: str, token: str, timeout: int = 35, ratelimiter: int = 25, max_retries: int = 3, retry_delay_sec: int = 3):
         self.base_url = base_url
         self.token = token
         self.timeout = timeout
-        self.global_rps = global_rps
+        self.ratelimiter = ratelimiter
         self.max_retries = max_retries
         self.retry_delay_sec = retry_delay_sec
 
@@ -65,7 +65,7 @@ class Client:
         self.token = cfg.token
 
         self.timeout = cfg.timeout if cfg.timeout > 0 else 35
-        self.global_limiter = RateLimiter(cfg.global_rps if cfg.global_rps > 0 else 25)
+        self.global_limiter = RateLimiter(cfg.ratelimiter if cfg.ratelimiter > 0 else 25)
         self.max_retries = cfg.max_retries
         self.retry_delay_sec = cfg.retry_delay_sec
 

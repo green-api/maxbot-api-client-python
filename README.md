@@ -43,15 +43,22 @@ from maxbot_api_client_python import API, Config
 
 ## Использование и примеры
 
+**Параметры конфигурации:** 
+
+- `base_url` - Базовый URL-адрес серверов платформы MaxBot. Все методы API будут маршрутизироваться по этому корневому адресу. Актуальный адрес указан в [официальной документации](https://dev.max.ru/docs-api).
+- `token` - Уникальный секретный ключ авторизации (API-ключ) вашего бота. Получить его можно в личном кабинете после [регистрации или создании бота](https://green-api.com/max-bot-api/docs/before-start/) на платформе [business.max.ru](https://business.max.ru/).
+- `ratelimiter` - Встроенный ограничитель частоты запросов. Он контролирует количество исходящих запросов в секунду (RPS), защищая бота от блокировки со стороны сервера за превышение лимитов. Рекомендуемое значение — не менее 25.
+- `timeout` - Максимальное время ожидания ответа от сервера (в секундах). Если сервер не ответит в течение этого времени, запрос будет завершен с ошибкой. Оптимальное значение — 30 секунд.
+
 **Как инициализировать клиент:**
 
 ```python
 try:
     bot = API(Config(
-    base_url="https://platform-bot.max.ru",  # Base url for MAX API requests
-    token="YOUR_BOT_TOKEN",                  # Max bot token
-    global_rps=25,
-    timeout=35
+    base_url="https://platform-bot.max.ru",
+    token="YOUR_BOT_TOKEN",                 # Замените на ваш токен
+    ratelimiter=25,
+    timeout=30
 ))
 except ValueError as e:
     print(f"Initialization error: {e}")

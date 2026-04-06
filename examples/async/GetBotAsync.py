@@ -9,8 +9,8 @@ async def main():
         bot = API(Config(
             base_url="https://platform-api.max.ru",  # Base url for MAX API requests
             token="YOUR_BOT_TOKEN",                  # Max bot token
-            global_rps=25,
-            timeout=35
+            ratelimiter=25,
+            timeout=30
         ))
     except ValueError as e:
         log.error(f"Initialization error: {e}")
