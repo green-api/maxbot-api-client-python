@@ -1,14 +1,10 @@
-import time, json, asyncio, httpx, threading, logging
+import time, json, asyncio, httpx, threading
 from functools import wraps
 from urllib.parse import urljoin
 from maxbot_api_client_python.exceptions import HandleErrorResponse
 from typing import Optional, Dict, Any, Type, TypeVar
 
 T = TypeVar("T")
-
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logging.getLogger("httpx").setLevel(logging.WARNING)
-log = logging.getLogger(__name__)
 
 class RateLimiter:
     def __init__(self, rps: int):
@@ -114,7 +110,7 @@ class Client:
             files=files,
             headers=headers
         )
-        log.debug(f"Response body: {response.text}")
+        print(f"Response body: {response.text}")
         return self._handle_response(response)
 
     async def arequest(self, method: str, path: str, query: Optional[Dict] = None, payload: Any = None, files: Optional[Dict] = None) -> bytes:
@@ -134,7 +130,7 @@ class Client:
             files=files,
             headers=headers
         )
-        log.debug(f"Response body: {response.text}")
+        print(f"Response body: {response.text}")
         return self._handle_response(response)
 
     def _handle_response(self, response: httpx.Response) -> bytes:
