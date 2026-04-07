@@ -38,7 +38,7 @@
 *Синхронный запрос:*
 
 ```python
-bot.chats.SetChatAdmins(SetChatAdminsReq(
+bot.chats.SetChatAdmins(
     chat_id=123456789,
     admins={
         {
@@ -50,13 +50,13 @@ bot.chats.SetChatAdmins(SetChatAdminsReq(
             permissions=["read_all_messages", "post_edit_delete_message"]
         },
     },
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.SetChatAdminsAsync(SetChatAdminsReq(
+await bot.chats.SetChatAdminsAsync(
     chat_id=123456789,
     admins={
         {
@@ -68,7 +68,7 @@ await bot.chats.SetChatAdminsAsync(SetChatAdminsReq(
             permissions=["read_all_messages", "post_edit_delete_message"]
         },
     },
-))
+)
 ```
 
 ## Ответ {#response}

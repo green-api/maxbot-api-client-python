@@ -1,4 +1,4 @@
-import asyncio
+import asyncio, logging
 
 from pathlib import Path
 from typing import Optional
@@ -6,7 +6,9 @@ from tenacity import retry, stop_after_attempt, wait_exponential
 
 from maxbot_api_client_python.client import Client, decode
 from maxbot_api_client_python.types.constants import Paths, UploadType
-from maxbot_api_client_python.types.models import *
+from maxbot_api_client_python.types.models import UploadedInfo, UploadFileReq, PhotoAttachmentRequestPayload
+
+logger = logging.getLogger(__name__)
 
 class Uploads:
     def __init__(self, client: Client):
@@ -18,30 +20,35 @@ class Uploads:
         reraise=True,
     )
 
-    def UploadFile(self, req: UploadFileReq) -> UploadedInfo:
+    def UploadFile(self, **kwargs) -> UploadedInfo:
         """
         Uploads a file to the server and returns the upload metadata.
         It seamlessly handles both STEP 1 (obtaining the URL) and STEP 2 (streaming the file).
 
         Example:
-            response = api.uploads.UploadFile(UploadFileReq(
+            response = api.uploads.UploadFile(
                 type=UploadType.IMAGE,
                 file_path="/path/to/image.png"
-            ))
+            )
         """
+        req = UploadFileReq(**kwargs)
         init_resp = self.get_upload_url(req.type)
         
         if init_resp.url:
+            if not req.file_path:
+                raise ValueError("file_path must be provided for multipart uploads.")
+                
             multipart_resp = self.upload_multipart(init_resp.url, req.file_path)
 
-            if multipart_resp and multipart_resp.token:
-                return multipart_resp
-
-            if multipart_resp and multipart_resp.photos:
-                first_photo = next(iter(multipart_resp.photos.values()), None)
-                if first_photo and first_photo.token:
-                    multipart_resp.token = first_photo.token
+            if multipart_resp:
+                if multipart_resp.token:
                     return multipart_resp
+
+                if multipart_resp.photos:
+                    first_photo = next(iter(multipart_resp.photos.values()), None)
+                    if first_photo and first_photo.token:
+                        multipart_resp.token = first_photo.token
+                        return multipart_resp
 
         if init_resp.token:
             return UploadedInfo(token=init_resp.token)
@@ -60,20 +67,20 @@ class Uploads:
                 files = {"file": (path.name, f)}
                 return decode(self.client, "POST", upload_url, UploadedInfo, files=files)
         except OSError as e:
-            Client.logger.error(f"Failed to read file for upload: {e}")
+            logger.error(f"Failed to read file for upload: {e}")
             return None
 
-    async def UploadFileAsync(self, req: UploadFileReq) -> UploadedInfo:
+    async def UploadFileAsync(self, **kwargs) -> UploadedInfo:
         """
         Async version of UploadFile.
 
         Example:
-            response = await api.uploads.UploadFileAsync(UploadFileReq(
+            response = await api.uploads.UploadFileAsync(
                 type=UploadType.IMAGE,
                 file_path="/path/to/image.png"
-            ))
+            )
         """
-        return await asyncio.to_thread(self.UploadFile, req)
+        return await asyncio.to_thread(self.UploadFile, **kwargs)
 
     async def get_upload_url_async(self, upload_type: UploadType) -> PhotoAttachmentRequestPayload:
         """Async version of get_upload_url."""

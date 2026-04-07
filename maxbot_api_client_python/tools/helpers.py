@@ -1,14 +1,13 @@
-import asyncio, os, time, httpx, aiofiles, logging, mimetypes
+import aiofiles, asyncio, httpx, logging, mimetypes, os, time
+from typing import Any, List, Optional
 from urllib.parse import urlparse
 from pathlib import Path
 
-from .uploads import Uploads
+from maxbot_api_client_python.tools.uploads import Uploads
 from maxbot_api_client_python.client import Client, decode, adecode
-from maxbot_api_client_python.types.constants import *
-from maxbot_api_client_python.types.models import *
+from maxbot_api_client_python.types.constants import AttachmentType, Paths, UploadType
+from maxbot_api_client_python.types.models import Message, SendFileReq, SendMessageReq, UploadFileReq, Attachment
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logging.getLogger("httpx").setLevel(logging.WARNING)
 logger = logging.getLogger(__name__)
 
 class Helpers:
@@ -16,36 +15,37 @@ class Helpers:
         self.client = client
         self.uploads = Uploads(client)
 
-    def SendFile(self, req: SendFileReq) -> Message:
+    def SendFile(self, **kwargs) -> Optional[Message]:
         """
         A helper that simplifies sending files to a chat.
         It automatically determines whether the provided file_source is a direct URL or a local file path.
 
         Example:
             # Sending a file via URL:
-            response = api.helpers.SendFile(SendFileReq(
+            response = api.helpers.SendFile(
                 chat_id=123456789,
                 text="Check out this image!",
                 file_source="https://example.com/image.png"
-            ))
+            )
 
             # Sending a local file:
-            response = api.helpers.SendFile(SendFileReq(
+            response = api.helpers.SendFile(
                 chat_id=123456789,
                 text="Here is the report.",
                 file_source="/local/path/to/report.pdf"
-            ))
+            )
         """
+        req = SendFileReq(**kwargs)
         if self._is_url(req.file_source):
             return self.sendFileByUrl(req)
         return self.sendFileByUpload(req)
 
-    def sendFileByUrl(self, req: SendFileReq) -> Message:
+    def sendFileByUrl(self, req: SendFileReq) -> Optional[Message]:
         ext = self._get_extension(req.file_source)
         upload_type = self._determine_upload_type(ext)
 
         if upload_type == UploadType.IMAGE:
-            attachment = {"type": AttachmentType.IMAGE.value, "payload": {"url": req.file_source}}
+            attachment = Attachment(type=AttachmentType.IMAGE, payload={"url": req.file_source})
             return self.sendFileInternal(req, attachment)
 
         temp_path = None
@@ -60,18 +60,22 @@ class Helpers:
             if temp_path and os.path.exists(temp_path):
                 os.remove(temp_path)
 
-    def sendFileByUpload(self, req: SendFileReq) -> Message:
+    def sendFileByUpload(self, req: SendFileReq) -> Optional[Message]:
         ext = self._get_extension(req.file_source)
         upload_type = self._determine_upload_type(ext)
 
         upload_req = UploadFileReq(type=upload_type, file_path=req.file_source)
-        upload_resp = self.uploads.UploadFile(upload_req)
+        upload_resp = self.uploads.UploadFile(**upload_req.model_dump_json(indent=4))
+
+        if not upload_resp or not upload_resp.token:
+            logger.error("Upload failed: No token returned.")
+            return None
 
         attachment = self._build_attachment_from_token(upload_type, upload_resp.token, Path(req.file_source).name)
         return self.sendFileInternal(req, attachment)
 
-    def sendFileInternal(self, req: SendFileReq, attachment: dict) -> Message:
-        attachments = req.attachments or []
+    def sendFileInternal(self, req: SendFileReq, attachment: Attachment) -> Message:
+        attachments: List[Attachment] = req.attachments or []
         attachments.append(attachment)
 
         request_data = SendMessageReq(
@@ -85,7 +89,7 @@ class Helpers:
             disable_link_preview=req.disable_link_preview
         )
 
-        last_err = None
+        last_err: Optional[Exception] = None
         for _ in range(self.client.max_retries):
             try:
                 return decode(self.client, "POST", Paths.MESSAGES, Message, query=request_data.model_dump(exclude_none=True), payload=request_data)
@@ -95,30 +99,34 @@ class Helpers:
                     time.sleep(self.client.retry_delay_sec)
                     continue
                 break
-        raise last_err
 
-    async def SendFileAsync(self, req: SendFileReq) -> Message:
+        if last_err:
+            raise last_err
+        raise Exception("Unknown error in sendFileInternal")
+
+    async def SendFileAsync(self, **kwargs) -> Optional[Message]:
         """
         Async version of SendFile.
 
         Example:
-            # Sending a local file asynchronously:
-            response = await api.helpers.SendFileAsync(SendFileReq(
-                chat_id=123456789,
-                text="Here is the report.",
-                file_source="/local/path/to/report.pdf"
-            ))
+        # Sending a local file asynchronously:
+        response = await api.helpers.SendFileAsync(
+            chat_id=123456789,
+            text="Here is the report.",
+            file_source="/local/path/to/report.pdf"
+        )
         """
+        req = SendFileReq(**kwargs)
         if self._is_url(req.file_source):
             return await self.sendFileByUrlAsync(req)
         return await self.sendFileByUploadAsync(req)
 
-    async def sendFileByUrlAsync(self, req: SendFileReq) -> Message:
+    async def sendFileByUrlAsync(self, req: SendFileReq) -> Optional[Message]:
         ext = self._get_extension(req.file_source)
         upload_type = self._determine_upload_type(ext)
 
         if upload_type == UploadType.IMAGE:
-            attachment = {"type": AttachmentType.IMAGE.value, "payload": {"url": req.file_source}}
+            attachment = Attachment(type=AttachmentType.IMAGE, payload={"url": req.file_source})
             return await self.sendFileInternalAsync(req, attachment)
 
         temp_path = None
@@ -133,18 +141,21 @@ class Helpers:
             if temp_path and os.path.exists(temp_path):
                 await asyncio.to_thread(os.remove, temp_path)
 
-    async def sendFileByUploadAsync(self, req: SendFileReq) -> Message:
+    async def sendFileByUploadAsync(self, req: SendFileReq) -> Optional[Message]:
         ext = self._get_extension(req.file_source)
         u_type = self._determine_upload_type(ext)
 
         upload_req = UploadFileReq(type=u_type, file_path=req.file_source)
-        upload_resp = await self.uploads.UploadFileAsync(upload_req) 
+        upload_resp = await self.uploads.UploadFileAsync(**upload_req.model_dump_json(indent=4)) 
+
+        if not upload_resp or not upload_resp.token:
+            return None
 
         attachment = self._build_attachment_from_token(u_type, upload_resp.token, Path(req.file_source).name)
         return await self.sendFileInternalAsync(req, attachment)
 
-    async def sendFileInternalAsync(self, req: SendFileReq, attachment: dict) -> Message:
-        attachments = req.attachments or []
+    async def sendFileInternalAsync(self, req: SendFileReq, attachment: Attachment) -> Message:
+        attachments: List[Attachment] = req.attachments or []
         attachments.append(attachment)
 
         request_data = SendMessageReq(
@@ -152,7 +163,7 @@ class Helpers:
             attachments=attachments
         )
 
-        last_err = None
+        last_err: Optional[Exception] = None
         for _ in range(self.client.max_retries):
             try:
                 return await adecode(
@@ -166,7 +177,10 @@ class Helpers:
                     await asyncio.sleep(self.client.retry_delay_sec)
                     continue
                 break
-        raise last_err
+
+        if last_err:
+            raise last_err
+        raise Exception("Unknown error in sendFileInternalAsync")
         
     def _is_url(self, source: str) -> bool:
         try:
@@ -189,12 +203,11 @@ class Helpers:
             return UploadType.AUDIO
         return UploadType.FILE
 
-    def _build_attachment_from_token(self, u_type: UploadType, token: str, filename: str) -> dict:
-        payload = {"token": token}
+    def _build_attachment_from_token(self, u_type: UploadType, token: str, filename: str) -> Attachment:
+        payload: dict[str, Any] = {"token": token}
         if u_type == UploadType.FILE:
             payload["filename"] = filename
-            
-        return {"type": u_type.value, "payload": payload}
+        return Attachment(type=AttachmentType(u_type.value), payload=payload)
 
     def _download_temp_file(self, url_str: str) -> str:
         headers = {"User-Agent": "maxbot-client/1.0"}

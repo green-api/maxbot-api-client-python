@@ -1,8 +1,7 @@
-from .api import API
-from .client import Config
-from .types import models
-from .types import constants
-from . import utils
-from . import tools
+from maxbot_api_client_python.api import API
+from maxbot_api_client_python.client import Config, Client
+from maxbot_api_client_python.types import models
+from maxbot_api_client_python.types import constants
+from maxbot_api_client_python import utils
 
-__all__ = ["API", "Config", "models", "constants", "utils", "tools"]
+__all__ = ["API", "Config", "Client", "models", "constants", "utils"]

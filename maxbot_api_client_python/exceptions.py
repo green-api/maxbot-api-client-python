@@ -1,6 +1,6 @@
 import httpx
 
-class MaxBotException(Exception):
+class MaxBotError(Exception):
     default_message = "unexpected API error"
     
     def __init__(self, message: str | None = None, status_code: int | None = None, response: str | None = None):
@@ -10,28 +10,27 @@ class MaxBotException(Exception):
         self.status_code = status_code
         self.response = response
 
-class ErrBadRequest(MaxBotException): default_message = "bad request"                  # 400
-class ErrUnauthorized(MaxBotException): default_message = "unauthorized"               # 401
-class ErrNotFound(MaxBotException): default_message = "not found"                      # 404
-class ErrMethodNotAllowed(MaxBotException): default_message = "method not allowed"     # 405
-class ErrTooManyRequests(MaxBotException): default_message = "too many requests"       # 429
-class ErrServiceUnavailable(MaxBotException): default_message = "service unavailable"  # 503
+class BadRequestError(MaxBotError): default_message = "bad request"
+class UnauthorizedError(MaxBotError): default_message = "unauthorized"
+class NotFoundError(MaxBotError): default_message = "not found"
+class MethodNotAllowedError(MaxBotError): default_message = "method not allowed"
+class TooManyRequestsError(MaxBotError): default_message = "too many requests"
+class ServiceUnavailableError(MaxBotError): default_message = "service unavailable"
 
-def get_exception_for_status(status_code: int) -> type[MaxBotException]:
-    error_map = {
-        400: ErrBadRequest,
-        401: ErrUnauthorized,
-        404: ErrNotFound,
-        405: ErrMethodNotAllowed,
-        429: ErrTooManyRequests,
-        503: ErrServiceUnavailable,
-    }
-    return error_map.get(status_code, MaxBotException)
+_ERROR_MAP = {
+    400: BadRequestError,
+    401: UnauthorizedError,
+    404: NotFoundError,
+    405: MethodNotAllowedError,
+    429: TooManyRequestsError,
+    503: ServiceUnavailableError,
+}
 
-def HandleErrorResponse(response: httpx.Response, body: bytes) -> Exception:
-    status_code = response.status_code
-    body_str = body.decode('utf-8', errors='ignore')
+def get_exception_for_status(status_code: int) -> type[MaxBotError]:
+    return _ERROR_MAP.get(status_code, MaxBotError)
 
-    ExceptionClass = get_exception_for_status(status_code)
+def build_api_error(response: httpx.Response) -> MaxBotError:
+    body_str = response.text 
+    ExceptionClass = get_exception_for_status(response.status_code)
     
-    return ExceptionClass(status_code=status_code, response=body_str)
+    return ExceptionClass(status_code=response.status_code, response=body_str)

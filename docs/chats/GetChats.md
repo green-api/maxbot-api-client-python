@@ -18,19 +18,19 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.chats.GetChats(GetChatsReq(
+response = bot.chats.GetChats(
     count=50,
     marker=1679823456
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatsAsync(GetChatsReq(
+response = await bot.chats.GetChatsAsync(
     count=50,
     marker=1679823456
-))
+)
 ```
 
 ## Ответ {#response}

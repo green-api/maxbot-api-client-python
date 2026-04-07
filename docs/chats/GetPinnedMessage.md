@@ -17,13 +17,13 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.GetPinnedMessage(GetPinnedMessageReq(chatID=123456789))
+response = bot.chats.GetPinnedMessage(chatID=123456789)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetPinnedMessageAsync(GetPinnedMessageReq(chatID=123456789))
+response = await bot.chats.GetPinnedMessageAsync(chatID=123456789)
 ```
 
 ## Ответ {#response}

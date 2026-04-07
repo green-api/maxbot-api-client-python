@@ -34,19 +34,19 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.subscriptions.Subscribe(SubscribeReq(
+response = bot.subscriptions.Subscribe(
     url="https://webhook.site/my-bot-endpoint",
     secret="my-secret-key"
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.subscriptions.SubscribeAsync(SubscribeReq(
+response = await bot.subscriptions.SubscribeAsync(
     url="https://webhook.site/my-bot-endpoint",
     secret="my-secret-key"
-))
+)
 ```
 
 ## Ответ {#response}

@@ -17,7 +17,7 @@ response = bot.Bots.GetBot()
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.Bots.GetBotASync()
+response = await bot.Bots.GetBotAsync()
 ```
 
 ## Ответ {#response}
