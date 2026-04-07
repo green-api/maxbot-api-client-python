@@ -5,7 +5,7 @@ with open("README.md", encoding="UTF-8") as file:
 
 setup(
     name="maxbot-api-client-python",
-    version="1.1.1",
+    version="1.1.2",
     author="Green API",
     description="Python client for MAX Bot API with Sync and Async support",
     long_description=long_description,
