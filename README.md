@@ -47,10 +47,10 @@ from maxbot_api_client_python import API, Config
 
 **Параметры конфигурации:** 
 
-- `base_url` - Базовый URL-адрес серверов платформы MaxBot. Все методы API будут маршрутизироваться по этому корневому адресу. Актуальный адрес указан в [официальной документации](https://dev.max.ru/docs-api).   
-- `token` - Уникальный секретный ключ авторизации (API-ключ) вашего бота. Получить его можно в личном кабинете после [регистрации или создании бота](https://green-api.com/max-bot-api/docs/before-start/) на платформе [business.max.ru](https://business.max.ru/).    
-- `ratelimiter` - Встроенный ограничитель частоты запросов. Он контролирует количество исходящих запросов в секунду (RPS), защищая бота от блокировки со стороны сервера за превышение лимитов. Рекомендуемое значение — не менее 25.   
-- `timeout` - Максимальное время ожидания ответа от сервера (в секундах). Если сервер не ответит в течение этого времени, запрос будет завершен с ошибкой. Оптимальное значение — 30 секунд.    
+- `base_url` - Базовый URL-адрес серверов платформы MaxBot. Все методы API будут отправляться по этому корневому адресу. Актуальный адрес указан в [официальной документации](https://dev.max.ru/docs-api).
+- `token` - Уникальный секретный ключ авторизации (API-ключ) вашего бота. Получить его можно в личном кабинете после [регистрации или создании бота](https://green-api.com/max-bot-api/docs/before-start/) на платформе [business.max.ru](https://business.max.ru/).
+- `ratelimiter` - Встроенный ограничитель частоты запросов. Он контролирует количество исходящих запросов в секунду (RPS), защищая бота от блокировки со стороны сервера за превышение лимитов. Рекомендуемое значение — не менее 25.
+- `timeout` - Максимальное время ожидания ответа от сервера (в секундах). Если сервер не ответит в течение этого времени, запрос будет завершен с ошибкой. Оптимальное значение — 30 секунд.
 
 **Как инициализировать клиент:**
 
@@ -235,6 +235,3 @@ async with API(cfg) as bot:
 | `Messages.GetMessage` | Извлекает содержимое и метаданные конкретного сообщения по его ID | [GetMessage](https://dev.max.ru/docs-api/methods/GET/messages/-messageId-) | [GetMessage](https://green-api.com/max-bot-api/docs/api/messages/GetMessage) |
 | `Messages.GetVideoInfo` | Возвращает подробную информацию о прикрепленном видео | [GetVideoInfo](https://dev.max.ru/docs-api/methods/GET/videos/-videoToken-) | [GetVideoInfo](https://green-api.com/max-bot-api/docs/api/messages/GetVideoInfo) |
 | `Messages.AnswerCallback` | Отправляет ответ после того, как пользователь нажмет кнопку | [AnswerCallback](https://dev.max.ru/docs-api/methods/POST/answers) | [AnswerCallback](https://green-api.com/max-bot-api/docs/api/messages/AnswerCallback )|
-
-```
-```
