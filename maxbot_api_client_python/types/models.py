@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Optional, List, Dict, Any
+from typing import Any
 from pydantic import BaseModel, Field, ConfigDict
 from maxbot_api_client_python.types.constants import (
     AttachmentType, ChatType, ChatStatus, MarkupType, Format, UpdateType,
@@ -13,111 +13,31 @@ class APIError(MaxBotModel):
     code: str
     message: str
 
-class Attachment(MaxBotModel):
-    type: AttachmentType
-    payload: Optional[Any] = None
-    latitude: Optional[float] = None
-    longitude: Optional[float] = None
+class SimpleQueryResult(MaxBotModel):
+    success: bool = Field(..., alias="success")
+    message: str | None = Field(None, alias="message")
 
-class ImagePayload(MaxBotModel):
-    photos: Dict[str, PhotoData]
-
-class PhotoData(MaxBotModel):
-    token: str
-
-class AttachmentRequest(MaxBotModel):
-    type: AttachmentType
-
-class PhotoAttachmentPayload(MaxBotModel):
-    photo_id: Optional[int] = None
-    token: Optional[str] = None
-    url: Optional[str] = None
-
-class MediaPayload(MaxBotModel):
-    url: Optional[str] = None
-    token: Optional[str] = None
-
-class VideoAttachmentPayload(MediaPayload):
-    thumbnail: Optional[str] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
-    duration: Optional[int] = None
-
-class AudioAttachmentPayload(MediaPayload):
-    transcription: Optional[str] = None
-
-class FileAttachmentPayload(MediaPayload):
-    filename: Optional[str] = None
-    size: Optional[int] = None
-
-class StickerData(MaxBotModel):
-    url: Optional[str] = None
-    code: Optional[str] = None
-
-class StickerAttachmentPayload(StickerData):
-    width: Optional[int] = None
-    height: Optional[int] = None
-
-class ContactAttachmentPayload(MaxBotModel):
-    name: Optional[str] = None
-    contact_id: Optional[int] = None
-    vcf_info: Optional[str] = None
-    vcf_phone: Optional[str] = None
-
-class KeyboardButton(MaxBotModel):
-    type: ButtonType
-    text: str
-    payload: Optional[str] = None
-    url: Optional[str] = None
-    quick: Optional[bool] = None
-    web_app: Optional[str] = None
-    contact_id: Optional[int] = None
-
-class Keyboard(MaxBotModel):
-    buttons: List[List[KeyboardButton]]
-
-class ShareAttachmentPayload(MaxBotModel):
-    url: Optional[str] = None
-    token: Optional[str] = None
-    title: Optional[str] = None
-    description: Optional[str] = None
-    image_url: Optional[str] = None
-
-class BotCommand(MaxBotModel):
-    name: str
-    description: Optional[str] = None
 
 class User(MaxBotModel):
     user_id: int
     first_name: str
-    last_name: Optional[str] = None
-    username: Optional[str] = None
+    last_name: str | None = None
+    username: str | None = None
     is_bot: bool
     last_activity_time: int
 
+class BotCommand(MaxBotModel):
+    name: str
+    description: str | None = None
+
 class BotInfo(User):
-    description: Optional[str] = None
-    avatar_url: Optional[str] = None
-    full_avatar_url: Optional[str] = None
-    commands: Optional[List[BotCommand]] = None
-
-class PhotoAttachmentRequestPayload(MaxBotModel):
-    url: str
-    token: Optional[str] = None
-    photos: Optional[Dict[str, PhotoData]] = None
-
-class BotPatch(MaxBotModel):
-    name: Optional[str] = None
-    username: Optional[str] = None
-    description: Optional[str] = None
-    commands: Optional[List[BotCommand]] = None
-    photo: Optional[PhotoAttachmentRequestPayload] = None
-
-class Image(MaxBotModel):
-    url: str
+    description: str | None = None
+    avatar_url: str | None = None
+    full_avatar_url: str | None = None
+    commands: list[BotCommand] | None = None
 
 class DialogWithUser(User):
-    description: Optional[str] = None
+    description: str | None = None
     avatar_url: str
     full_avatar_url: str
 
@@ -126,163 +46,236 @@ class ChatMember(DialogWithUser):
     is_owner: bool
     is_admin: bool
     join_time: int
-    permissions: List[ChatAdminPermission]
-    alias: Optional[str] = None
+    permissions: list[ChatAdminPermission]
+    alias: str | None = None
 
 class ChatAdmin(MaxBotModel):
     user_id: int
-    permissions: List[ChatAdminPermission]
-    alias: Optional[str] = None
+    permissions: list[ChatAdminPermission]
+    alias: str | None = None
 
 class Recipient(MaxBotModel):
-    chat_id: Optional[int] = None
+    chat_id: int | None = None
     chat_type: ChatType
-    user_id: Optional[int] = None
+    user_id: int | None = None
 
-class LinkedMessage(MaxBotModel):
-    type: LinkedMessageType
-    sender: Optional[User] = None
-    chat_id: Optional[int] = None
-    message: Optional[MessageBody] = None
+
+class Image(MaxBotModel):
+    url: str
+
+class Photos(MaxBotModel):
+    token: str
+
+class PhotoData(MaxBotModel):
+    token: str
+
+class ImagePayload(MaxBotModel):
+    photos: dict[str, PhotoData]
+
+class StickerData(MaxBotModel):
+    url: str | None = None
+    code: str | None = None
+
+
+class MediaPayload(MaxBotModel):
+    url: str | None = None
+    token: str | None = None
+
+class PhotoAttachmentPayload(MaxBotModel):
+    photo_id: int | None = None
+    token: str | None = None
+    url: str | None = None
+
+class PhotoAttachmentRequestPayload(MaxBotModel):
+    url: str
+    token: str | None = None
+    photos: dict[str, PhotoData] | None = None
+
+class VideoAttachmentPayload(MediaPayload):
+    thumbnail: str | None = None
+    width: int | None = None
+    height: int | None = None
+    duration: int | None = None
+
+class AudioAttachmentPayload(MediaPayload):
+    transcription: str | None = None
+
+class FileAttachmentPayload(MediaPayload):
+    filename: str | None = None
+    size: int | None = None
+
+class StickerAttachmentPayload(StickerData):
+    width: int | None = None
+    height: int | None = None
+
+class ContactAttachmentPayload(MaxBotModel):
+    name: str | None = None
+    contact_id: int | None = None
+    vcf_info: str | None = None
+    vcf_phone: str | None = None
+
+class KeyboardButton(MaxBotModel):
+    type: ButtonType
+    text: str
+    payload: str | None = None
+    url: str | None = None
+    quick: bool | None = None
+    web_app: str | None = None
+    contact_id: int | None = None
+
+class Keyboard(MaxBotModel):
+    buttons: list[list[KeyboardButton]]
+
+class ShareAttachmentPayload(MaxBotModel):
+    url: str | None = None
+    token: str | None = None
+    title: str | None = None
+    description: str | None = None
+    image_url: str | None = None
+
+class AttachmentRequest(MaxBotModel):
+    type: AttachmentType
+
+class Attachment(MaxBotModel):
+    type: AttachmentType
+    payload: Any | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+
+
+class BotPatch(MaxBotModel):
+    name: str | None = None
+    username: str | None = None
+    description: str | None = None
+    commands: list[BotCommand] | None = None
+    photo: PhotoAttachmentRequestPayload | None = None
+
 
 class MarkupElement(MaxBotModel):
     type: MarkupType
     from_: int = Field(alias="from")
     length: int
 
+class NewMessageLink(MaxBotModel):
+    type: LinkedMessageType
+    mid: str
+
+class LinkedMessage(MaxBotModel):
+    type: LinkedMessageType
+    sender: User | None = None
+    chat_id: int | None = None
+    message: MessageBody | None = None
+
 class MessageBody(MaxBotModel):
     mid: str
     seq: int
-    text: Optional[str] = None
-    attachments: Optional[List[Attachment]] = None
-    markup: Optional[List[MarkupElement]] = None
+    text: str | None = None
+    attachments: list[Attachment] | None = None
+    markup: list[MarkupElement] | None = None
+
+class NewMessageBody(MaxBotModel):
+    text: str | None = None
+    attachments: list[Attachment] | None = None
+    link: NewMessageLink | None = None
+    notify: bool | None = None
+    format: Format | None = None
 
 class MessageStat(MaxBotModel):
     views: int
 
 class Message(MaxBotModel):
-    sender: Optional[User] = None
-    recipient: Optional[Recipient] = None
-    timestamp: Optional[int] = None
-    linked_message: Optional[LinkedMessage] = Field(None, alias="link")
-    body: Optional[MessageBody] = None
-    stat: Optional[MessageStat] = None
-    url: Optional[str] = None
+    sender: User | None = None
+    recipient: Recipient | None = None
+    timestamp: int | None = None
+    linked_message: LinkedMessage | None = Field(None, alias="link")
+    body: MessageBody | None = None
+    stat: MessageStat | None = None
+    url: str | None = None
 
 class MessagesList(MaxBotModel):
-    messages: List[Message]
-    
+    messages: list[Message]
+
+
 class Chat(MaxBotModel):
     chat_id: int
     type: ChatType
     status: ChatStatus
-    title: Optional[str] = None
-    icon: Optional[Image] = None
+    title: str | None = None
+    icon: Image | None = None
     last_event_time: int
-    participants_count: Optional[int] = None
-    owner_id: Optional[int] = None
-    participants: Optional[Dict[str, int]] = None
+    participants_count: int | None = None
+    owner_id: int | None = None
+    participants: dict[str, int] | None = None
     is_public: bool
-    link: Optional[str] = None
-    description: Optional[str] = None
-    dialog_with_user: Optional[DialogWithUser] = None
-    chat_message_id: Optional[str] = None
-    pinned_message: Optional[Message] = None
+    link: str | None = None
+    description: str | None = None
+    dialog_with_user: DialogWithUser | None = None
+    chat_message_id: str | None = None
+    pinned_message: Message | None = None
 
 class ChatInfo(MaxBotModel):
     chat_id: int
     type: ChatType
     status: ChatStatus
-    title: Optional[str] = None
-    icon: Optional[Image] = None
+    title: str | None = None
+    icon: Image | None = None
     last_event_time: int
-    participants_count: Optional[int] = None
-    owner_id: Optional[int] = None
-    participants: Optional[Dict[str, int]] = None
+    participants_count: int | None = None
+    owner_id: int | None = None
+    participants: dict[str, int] | None = None
     is_public: bool
-    link: Optional[str] = None
-    description: Optional[str] = None
-    dialog_with_user: Optional[List[DialogWithUser]] = None
-    chat_message_id: Optional[str] = None
-    pinned_message: Optional[List[Message]] = None
+    link: str | None = None
+    description: str | None = None
+    dialog_with_user: list[DialogWithUser] | None = None
+    chat_message_id: str | None = None
+    pinned_message: list[Message] | None = None
 
-class Photos(MaxBotModel):
-    token: str
-
-class VideoInfo(MaxBotModel):
-    id: str
-    status: str
-    duration: int
-    url: str
-
-class VideoUrls(MaxBotModel):
-    mp4_1080: Optional[str] = None
-    mp4_720: Optional[str] = None
-    mp4_480: Optional[str] = None
-    mp4_360: Optional[str] = None
-    mp4_240: Optional[str] = None
-    mp4_144: Optional[str] = None
-    hls: Optional[str] = None
-
-class NewMessageLink(MaxBotModel):
-    type: LinkedMessageType
-    mid: str
-
-class NewMessageBody(MaxBotModel):
-    text: Optional[str] = None
-    attachments: Optional[List[Attachment]] = None
-    link: Optional[NewMessageLink] = None
-    notify: Optional[bool] = None
-    format: Optional[Format] = None
 
 class Callback(MaxBotModel):
     timestamp: int
     callback_id: str
-    payload: Optional[str] = None
+    payload: str | None = None
     user: User
 
 class Update(MaxBotModel):
     update_type: UpdateType
     timestamp: int
-    callback: Optional[Callback] = None
-    message: Optional[Message] = None
-    message_id: Optional[str] = None
-    chat_id: Optional[int] = None
-    user_id: Optional[int] = None
-    muted_until: Optional[int] = None
-    user_locale: Optional[str] = None
-    is_channel: Optional[bool] = None
+    callback: Callback | None = None
+    message: Message | None = None
+    message_id: str | None = None
+    chat_id: int | None = None
+    user_id: int | None = None
+    muted_until: int | None = None
+    user_locale: str | None = None
+    is_channel: bool | None = None
+
+class MessageCallbackUpdate(Update):
+    callback: Callback
+    message: Message | None = None
 
 class Subscription(MaxBotModel):
     url: str
     time: int
-    update_types: Optional[List[UpdateType]] = None
+    update_types: list[UpdateType] | None = None
 
-class MessageCallbackUpdate(Update):
-    callback: Callback
-    message: Optional[Message] = None
-
-class FailedUserDetails(MaxBotModel):
-    error_code: str
-    user_ids: List[int]
 
 class GetChatsReq(MaxBotModel):
-    count: Optional[int] = Field(None, alias="count")
-    marker: Optional[int] = Field(None, alias="marker")
+    count: int | None = Field(None, alias="count")
+    marker: int | None = Field(None, alias="marker")
 
 class GetChatsResp(MaxBotModel):
-    chats: List[Chat]
-    marker: Optional[int] = None
+    chats: list[Chat]
+    marker: int | None = None
 
 class GetChatReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
 
 class EditChatReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
-    icon: Optional[Image] = None
-    title: Optional[str] = None
-    pin: Optional[str] = None
-    notify: Optional[bool] = None
+    icon: Image | None = None
+    title: str | None = None
+    pin: str | None = None
+    notify: bool | None = None
 
 class DeleteChatReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
@@ -294,7 +287,7 @@ class SendActionReq(MaxBotModel):
 class PinMessageReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
     message_id: str
-    notify: Optional[bool] = None
+    notify: bool | None = None
 
 class UnpinMessageReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
@@ -312,13 +305,13 @@ class GetChatAdminsReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
 
 class GetChatAdminsResp(MaxBotModel):
-    members: List[ChatMember]
-    marker: Optional[int] = None
+    members: list[ChatMember]
+    marker: int | None = None
 
 class SetChatAdminsReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
-    admins: List[ChatAdmin]
-    marker: Optional[int] = None
+    admins: list[ChatAdmin]
+    marker: int | None = None
 
 class DeleteAdminReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
@@ -326,52 +319,131 @@ class DeleteAdminReq(MaxBotModel):
 
 class GetChatMembersReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
-    user_ids: Optional[List[int]] = Field(None, alias="user_ids")
-    marker: Optional[int] = Field(None, alias="marker")
-    count: Optional[int] = Field(None, alias="count")
+    user_ids: list[int] | None = Field(None, alias="user_ids")
+    marker: int | None = Field(None, alias="marker")
+    count: int | None = Field(None, alias="count")
 
 class AddMembersReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
-    user_ids: Optional[List[int]] = None
+    user_ids: list[int] | None = None
 
-class SimpleQueryResult(MaxBotModel):
-    success: bool = Field(..., alias="success")
-    message: Optional[str] = Field(None, alias="message")
+class FailedUserDetails(MaxBotModel):
+    error_code: str
+    user_ids: list[int]
 
 class AddMembersResp(SimpleQueryResult):
-    failed_user_ids: Optional[List[int]] = Field(None, alias="failed_user_ids")
-    failed_user_details: Optional[List[FailedUserDetails]] = Field(None, alias="failed_user_details")
+    failed_user_ids: list[int] | None = Field(None, alias="failed_user_ids")
+    failed_user_details: list[FailedUserDetails] | None = Field(None, alias="failed_user_details")
 
 class DeleteMemberReq(MaxBotModel):
     chat_id: int = Field(..., alias="chatId")
     user_id: int = Field(..., alias="userId")
-    block: Optional[bool] = Field(None, alias="block")
+    block: bool | None = Field(None, alias="block")
+
+
+class GetMessagesReq(MaxBotModel):
+    chat_id: int | None = Field(None, alias="chat_id")
+    message_ids: list[str] | None = Field(None, alias="message_ids")
+    from_: int | None = Field(None, alias="from")
+    to: int | None = Field(None, alias="to")
+    count: int | None = Field(None, alias="count")
+
+class SendMessageReq(MaxBotModel):
+    user_id: int | None = Field(None, alias="user_id")
+    chat_id: int | None = Field(None, alias="chat_id")
+    text: str | None = None
+    format: Format | None = None
+    notify: bool | None = None
+    attachments: list[Attachment] | None = None
+    link: NewMessageLink | None = None
+    disable_link_preview: bool | None = Field(None, alias="disable_link_preview")
+
+class SendMessageResp(MaxBotModel):
+    message: Message
+
+class EditMessageReq(MaxBotModel):
+    message_id: str = Field(..., alias="message_id")
+    text: str | None = None
+    attachments: list[Attachment] | None = None
+    link: NewMessageLink | None = None
+    notify: bool | None = None
+    format: Format | None = None
+
+class DeleteMessageReq(MaxBotModel):
+    message_id: str = Field(..., alias="message_id")
+
+class GetMessageReq(MaxBotModel):
+    message_id: str = Field(..., alias="message_id")
+
+class VideoUrls(MaxBotModel):
+    mp4_1080: str | None = None
+    mp4_720: str | None = None
+    mp4_480: str | None = None
+    mp4_360: str | None = None
+    mp4_240: str | None = None
+    mp4_144: str | None = None
+    hls: str | None = None
+
+class VideoInfo(MaxBotModel):
+    id: str
+    status: str
+    duration: int
+    url: str
+
+class GetVideoInfoReq(MaxBotModel):
+    video_token: str = Field(..., alias="video_token")
+
+class GetVideoInfoResp(MaxBotModel):
+    token: str
+    urls: VideoUrls | None = None
+    thumbnail: PhotoAttachmentPayload | None = None
+    width: int | None = None
+    height: int | None = None
+    duration: int | None = None
+
+class AnswerCallbackReq(MaxBotModel):
+    callback_id: str = Field(..., alias="callback_id")
+    message: NewMessageBody | None = None
+    notification: str | None = None
+
+class SendFileReq(MaxBotModel):
+    user_id: int | None = Field(None, alias="user_id")
+    chat_id: int | None = Field(None, alias="chat_id")
+    text: str | None = None
+    format: Format | None = None
+    notify: bool | None = None
+    file_source: str
+    link: NewMessageLink | None = None
+    disable_link_preview: bool | None = Field(None, alias="disable_link_preview")
+    attachments: list[Attachment] | None = None
+
 
 class GetSubscriptionsResp(MaxBotModel):
-    subscriptions: List[Subscription]
+    subscriptions: list[Subscription]
 
 class SubscribeReq(MaxBotModel):
     url: str
-    update_types: Optional[List[UpdateType]] = None
-    secret: Optional[str] = None
+    update_types: list[UpdateType] | None = None
+    secret: str | None = None
 
 class UnsubscribeReq(MaxBotModel):
     url: str = Field(..., alias="url")
 
 class GetUpdatesReq(MaxBotModel):
-    limit: Optional[int] = Field(None, alias="limit")
-    timeout: Optional[int] = Field(None, alias="timeout")
-    marker: Optional[int] = Field(None, alias="marker")
-    types: Optional[List[UpdateType]] = Field(None, alias="types")
+    limit: int | None = Field(None, alias="limit")
+    timeout: int | None = Field(None, alias="timeout")
+    marker: int | None = Field(None, alias="marker")
+    types: list[UpdateType] | None = Field(None, alias="types")
 
 class GetUpdatesResp(MaxBotModel):
-    updates: List[Update]
+    updates: list[Update]
     marker: int
+
 
 class UploadFileReq(MaxBotModel):
     type: UploadType = Field(..., alias="type")
-    upload_url: Optional[str] = None
-    file_path: Optional[str] = None
+    upload_url: str | None = None
+    file_path: str | None = None
 
 class UploadTypeReq(MaxBotModel):
     type: UploadType = Field(..., alias="type")
@@ -381,67 +453,6 @@ class UploadFileMultipartReq(MaxBotModel):
     file_path: str
 
 class UploadedInfo(MaxBotModel):
-    file_id: Optional[int] = None
-    token: Optional[str] = None
-    photos: Optional[Dict[str, PhotoData]] = None
-
-class GetMessagesReq(MaxBotModel):
-    chat_id: Optional[int] = Field(None, alias="chat_id")
-    message_ids: Optional[List[str]] = Field(None, alias="message_ids")
-    from_: Optional[int] = Field(None, alias="from")
-    to: Optional[int] = Field(None, alias="to")
-    count: Optional[int] = Field(None, alias="count")
-
-class SendMessageReq(MaxBotModel):
-    user_id: Optional[int] = Field(None, alias="user_id")
-    chat_id: Optional[int] = Field(None, alias="chat_id")
-    text: Optional[str] = None
-    format: Optional[Format] = None
-    notify: Optional[bool] = None
-    attachments: Optional[List[Attachment]] = None
-    link: Optional[NewMessageLink] = None
-    disable_link_preview: Optional[bool] = Field(None, alias="disable_link_preview")
-
-class SendMessageResp(MaxBotModel):
-    message: Message
-
-class EditMessageReq(MaxBotModel):
-    message_id: str = Field(..., alias="message_id")
-    text: Optional[str] = None
-    attachments: Optional[List[Attachment]] = None
-    link: Optional[NewMessageLink] = None
-    notify: Optional[bool] = None
-    format: Optional[Format] = None
-
-class DeleteMessageReq(MaxBotModel):
-    message_id: str = Field(..., alias="message_id")
-
-class GetMessageReq(MaxBotModel):
-    message_id: str = Field(..., alias="message_id")
-
-class GetVideoInfoReq(MaxBotModel):
-    video_token: str = Field(..., alias="video_token")
-
-class GetVideoInfoResp(MaxBotModel):
-    token: str
-    urls: Optional[VideoUrls] = None
-    thumbnail: Optional[PhotoAttachmentPayload] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
-    duration: Optional[int] = None
-
-class AnswerCallbackReq(MaxBotModel):
-    callback_id: str = Field(..., alias="callback_id")
-    message: Optional[NewMessageBody] = None
-    notification: Optional[str] = None
-
-class SendFileReq(MaxBotModel):
-    user_id: Optional[int] = Field(None, alias="user_id")
-    chat_id: Optional[int] = Field(None, alias="chat_id")
-    text: Optional[str] = None
-    format: Optional[Format] = None
-    notify: Optional[bool] = None
-    file_source: str
-    link: Optional[NewMessageLink] = None
-    disable_link_preview: Optional[bool] = Field(None, alias="disable_link_preview")
-    attachments: Optional[List[Attachment]] = None
+    file_id: int | None = None
+    token: str | None = None
+    photos: dict[str, PhotoData] | None = None

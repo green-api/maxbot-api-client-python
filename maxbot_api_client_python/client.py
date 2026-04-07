@@ -1,10 +1,11 @@
-import time, json, asyncio, httpx, threading
+import asyncio, httpx, json, logging, time, threading
+from dataclasses import dataclass
 from functools import wraps
+from typing import Any
 from urllib.parse import urljoin
-from maxbot_api_client_python.exceptions import HandleErrorResponse
-from typing import Optional, Dict, Any, Type, TypeVar
 
-T = TypeVar("T")
+from maxbot_api_client_python.exceptions import build_api_error
+logger = logging.getLogger(__name__)
 
 class RateLimiter:
     def __init__(self, rps: int):
@@ -13,18 +14,16 @@ class RateLimiter:
         self.last_request_time = 0.0
         self.set_limit(rps)
 
-    def set_limit(self, rps: int):
+    def set_limit(self, rps: int) -> None:
         self.limit = rps
-        self.interval = 1.0 / rps if rps > 0 else 0
+        self.interval = 1.0 / rps if rps > 0 else 0.0
 
-    def wait(self):
+    def wait(self) -> None:
         if self.interval <= 0:
             return
 
-        delay = 0.0
-
         with self._lock:
-            now = time.time()
+            now = time.monotonic()
             elapsed = now - self.last_request_time
             delay = max(0.0, self.interval - elapsed)
             self.last_request_time = now + delay 
@@ -32,12 +31,12 @@ class RateLimiter:
         if delay > 0:
             time.sleep(delay)
 
-    async def async_wait(self):
+    async def async_wait(self) -> None:
         if self.interval <= 0:
             return
 
         async with self._alock:
-            now = time.time()
+            now = time.monotonic()
             elapsed = now - self.last_request_time
             delay = max(0.0, self.interval - elapsed)
             self.last_request_time = now + delay
@@ -45,19 +44,19 @@ class RateLimiter:
         if delay > 0:
             await asyncio.sleep(delay)
 
+@dataclass
 class Config:
-    def __init__(self, base_url: str, token: str, timeout: int = 35, ratelimiter: int = 25, max_retries: int = 3, retry_delay_sec: int = 3):
-        self.base_url = base_url
-        self.token = token
-        self.timeout = timeout
-        self.ratelimiter = ratelimiter
-        self.max_retries = max_retries
-        self.retry_delay_sec = retry_delay_sec
+    base_url: str
+    token: str
+    timeout: int = 35
+    ratelimiter: int = 25
+    max_retries: int = 3
+    retry_delay_sec: int = 3
 
 class Client:
     def __init__(self, cfg: Config):
         if not cfg.base_url or not cfg.token:
-            raise ValueError("BaseURL and Token must be set")
+            raise ValueError("base_url and token must be set")
 
         self.base_url = cfg.base_url.rstrip("/") + "/"
         self.token = cfg.token
@@ -70,17 +69,29 @@ class Client:
         self.headers = {"Authorization": self.token}
 
         self._sync_client = httpx.Client(timeout=self.timeout)
-        self._async_client: Optional[httpx.AsyncClient] = None
+        self._async_client: httpx.AsyncClient | None = None
+
+    def __enter__(self) -> "Client":
+        return self
+        
+    def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        self.close()
+
+    async def __aenter__(self) -> "Client":
+        return self
+        
+    async def __aexit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None:
+        await self.aclose()
 
     async def get_async_client(self) -> httpx.AsyncClient:
         if self._async_client is None:
             self._async_client = httpx.AsyncClient(timeout=self.timeout)
         return self._async_client
 
-    def close(self):
+    def close(self) -> None:
         self._sync_client.close()
 
-    async def aclose(self):
+    async def aclose(self) -> None:
         if self._async_client:
             await self._async_client.aclose()
 
@@ -89,12 +100,19 @@ class Client:
             return path
         return urljoin(self.base_url, path.lstrip("/"))
 
-    def _prepare_data(self, payload: Any):
+    def _prepare_data(self, payload: Any) -> Any:
         if hasattr(payload, "model_dump"):
             return payload.model_dump(exclude_none=True)
         return payload
 
-    def request(self, method: str, path: str, query: Optional[Dict] = None, payload: Any = None, files: Optional[Dict] = None) -> bytes:
+    def request(
+        self, 
+        method: str, 
+        path: str, 
+        query: dict[str, Any] | None = None, 
+        payload: Any = None, 
+        files: dict[str, Any] | None = None
+    ) -> bytes:
         self.global_limiter.wait()
         
         headers = self.headers.copy()
@@ -110,10 +128,17 @@ class Client:
             files=files,
             headers=headers
         )
-        print(f"Response body: {response.text}")
+        logger.debug(f"Response body: {response.text}")
         return self._handle_response(response)
 
-    async def arequest(self, method: str, path: str, query: Optional[Dict] = None, payload: Any = None, files: Optional[Dict] = None) -> bytes:
+    async def arequest(
+        self, 
+        method: str, 
+        path: str, 
+        query: dict[str, Any] | None = None, 
+        payload: Any = None, 
+        files: dict[str, Any] | None = None
+    ) -> bytes:
         await self.global_limiter.async_wait()
         
         api = await self.get_async_client()
@@ -130,41 +155,41 @@ class Client:
             files=files,
             headers=headers
         )
-        print(f"Response body: {response.text}")
+        logger.debug(f"Response body: {response.text}")
         return self._handle_response(response)
 
     def _handle_response(self, response: httpx.Response) -> bytes:
         if not (200 <= response.status_code < 300):
-            raise HandleErrorResponse(response, response.content)
+            raise build_api_error(response)
         return response.content
     
-    def _parse_response[T](self, data: bytes, model_class: Type[T]) -> T:
+    def _parse_response[T](self, data: bytes, model_class: type[T]) -> T:
         if not data or data.strip() == b"":
             return model_class()
         if data.strip() == b'<retval>1</retval>':
             return model_class()
+        
         try:
             parsed_json = json.loads(data)
         except json.JSONDecodeError:
             decoded_snippet = data[:100].decode('utf-8', errors='replace')
-            print(f"Server returned non-JSON response: {decoded_snippet}")
+            logger.warning(f"Server returned non-JSON response: {decoded_snippet}")
             return model_class()
 
-        validate_func = getattr(model_class, "model_validate", None)
-        if validate_func:
-            return validate_func(parsed_json)
+        if hasattr(model_class, "model_validate"):
+            return model_class.model_validate(parsed_json)
         return parsed_json
     
-def decode[T](client: Client, method: str, path: str, model_class: Type[T], **kwargs) -> T:
+def decode[T](client: Client, method: str, path: str, model_class: type[T], **kwargs: Any) -> T:
     response = client.request(method, path, **kwargs)
     return client._parse_response(response, model_class)
 
-async def adecode[T](client: Client, method: str, path: str, model_class: Type[T], **kwargs) -> T:
+async def adecode[T](client: Client, method: str, path: str, model_class: type[T], **kwargs: Any) -> T:
     response = await client.arequest(method, path, **kwargs)
     return client._parse_response(response, model_class)
 
-def as_async(func):
+def as_async(func: Any) -> Any:
     @wraps(func)
-    async def wrapper(*args, **kwargs):
+    async def wrapper(*args: Any, **kwargs: Any) -> Any:
         return await asyncio.to_thread(func, *args, **kwargs)
     return wrapper

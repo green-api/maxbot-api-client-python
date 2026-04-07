@@ -1,4 +1,4 @@
-import asyncio, os, time, httpx, aiofiles, mimetypes
+import aiofiles, asyncio, httpx, logging, mimetypes, os, time
 from typing import Any, List, Optional
 from urllib.parse import urlparse
 from pathlib import Path
@@ -8,31 +8,34 @@ from maxbot_api_client_python.client import Client, decode, adecode
 from maxbot_api_client_python.types.constants import AttachmentType, Paths, UploadType
 from maxbot_api_client_python.types.models import Message, SendFileReq, SendMessageReq, UploadFileReq, Attachment
 
+logger = logging.getLogger(__name__)
+
 class Helpers:
     def __init__(self, client: Client):
         self.client = client
         self.uploads = Uploads(client)
 
-    def SendFile(self, req: SendFileReq) -> Optional[Message]:
+    def SendFile(self, **kwargs) -> Optional[Message]:
         """
         A helper that simplifies sending files to a chat.
         It automatically determines whether the provided file_source is a direct URL or a local file path.
 
         Example:
             # Sending a file via URL:
-            response = api.helpers.SendFile(SendFileReq(
+            response = api.helpers.SendFile(
                 chat_id=123456789,
                 text="Check out this image!",
                 file_source="https://example.com/image.png"
-            ))
+            )
 
             # Sending a local file:
-            response = api.helpers.SendFile(SendFileReq(
+            response = api.helpers.SendFile(
                 chat_id=123456789,
                 text="Here is the report.",
                 file_source="/local/path/to/report.pdf"
-            ))
+            )
         """
+        req = SendFileReq(**kwargs)
         if self._is_url(req.file_source):
             return self.sendFileByUrl(req)
         return self.sendFileByUpload(req)
@@ -51,7 +54,7 @@ class Helpers:
             req.file_source = temp_path
             return self.sendFileByUpload(req)
         except Exception as e:
-            print(f"File processing/upload error: {e}")
+            logger.error(f"File processing/upload error: {e}")
             return None
         finally:
             if temp_path and os.path.exists(temp_path):
@@ -62,10 +65,10 @@ class Helpers:
         upload_type = self._determine_upload_type(ext)
 
         upload_req = UploadFileReq(type=upload_type, file_path=req.file_source)
-        upload_resp = self.uploads.UploadFile(upload_req)
+        upload_resp = self.uploads.UploadFile(**upload_req.model_dump_json(indent=4))
 
         if not upload_resp or not upload_resp.token:
-            print("Upload failed: No token returned.")
+            logger.error("Upload failed: No token returned.")
             return None
 
         attachment = self._build_attachment_from_token(upload_type, upload_resp.token, Path(req.file_source).name)
@@ -101,18 +104,19 @@ class Helpers:
             raise last_err
         raise Exception("Unknown error in sendFileInternal")
 
-    async def SendFileAsync(self, req: SendFileReq) -> Optional[Message]:
+    async def SendFileAsync(self, **kwargs) -> Optional[Message]:
         """
         Async version of SendFile.
 
         Example:
         # Sending a local file asynchronously:
-        response = await api.helpers.SendFileAsync(SendFileReq(
+        response = await api.helpers.SendFileAsync(
             chat_id=123456789,
             text="Here is the report.",
             file_source="/local/path/to/report.pdf"
-        ))
+        )
         """
+        req = SendFileReq(**kwargs)
         if self._is_url(req.file_source):
             return await self.sendFileByUrlAsync(req)
         return await self.sendFileByUploadAsync(req)
@@ -131,7 +135,7 @@ class Helpers:
             req.file_source = temp_path
             return await self.sendFileByUploadAsync(req)
         except Exception as e:
-            print(f"Async file processing/upload error: {e}")
+            logger.error(f"Async file processing/upload error: {e}")
             return None
         finally:
             if temp_path and os.path.exists(temp_path):
@@ -142,7 +146,7 @@ class Helpers:
         u_type = self._determine_upload_type(ext)
 
         upload_req = UploadFileReq(type=u_type, file_path=req.file_source)
-        upload_resp = await self.uploads.UploadFileAsync(upload_req) 
+        upload_resp = await self.uploads.UploadFileAsync(**upload_req.model_dump_json(indent=4)) 
 
         if not upload_resp or not upload_resp.token:
             return None
