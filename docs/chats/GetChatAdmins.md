@@ -17,13 +17,13 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.GetChatAdmins(GetChatAdminsReq(chat_id=123456789))
+response = bot.chats.GetChatAdmins(chat_id=123456789)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatAdminsAsync(GetChatAdminsReq(chat_id=123456789))
+response = await bot.chats.GetChatAdminsAsync(chat_id=123456789)
 ```
 
 ## Ответ {#response}

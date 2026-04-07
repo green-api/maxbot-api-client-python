@@ -18,17 +18,17 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.bots.PatchBot(BotPatch(
+response = bot.bots.PatchBot(
     name="New name"
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.bots.PatchBotAsync(BotPatch(
+response = await bot.bots.PatchBotAsync(
     name="New name"
-))
+)
 ```
 
 ## Ответ {#response}

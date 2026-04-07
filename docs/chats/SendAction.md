@@ -24,19 +24,19 @@
 *Синхронный запрос:*
 
 ```python
-bot.chats.SendAction(SendActionReq(
+bot.chats.SendAction(
     chat_id=123456789,
     action="typing_on"
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.SendActionAsync(SendActionReq(
+await bot.chats.SendActionAsync(
     chat_id=123456789,
     action="typing_on"
-))
+)
 ```
 
 ## Ответ {#response}

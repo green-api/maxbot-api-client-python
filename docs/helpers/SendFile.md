@@ -23,23 +23,23 @@
 *Синхронный запрос:*
 
 ```python
-bot.helpers.SendFile(SendFileReq(
+bot.helpers.SendFile(
     chat_id=123456789,
     text="Вот отчет за этот месяц",
     file_source="./reports/march.pdf",
     notify=True
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.helpers.SendFileAsync(SendFileReq(
+await bot.helpers.SendFileAsync(
     user_id=987654321,
     text="Посмотри на эту статью: https://example.com/article",
     file_source="https://example.com/image.png",
     disable_link_preview=True
-))
+)
 ```
 
 ## Ответ {#response}

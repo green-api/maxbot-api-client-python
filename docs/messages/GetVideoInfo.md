@@ -17,17 +17,17 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.messages.GetVideoInfo(GetVideoInfoReq(
+response = bot.messages.GetVideoInfo(
     video_token="f9LHo9qcjkTKVMC1O8b_62OLxJsPk0_8edD0clywyQ2lv0GN5P0QBI5aikR"
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.GetVideoInfoAsync(GetVideoInfoReq(
+response = await bot.messages.GetVideoInfoAsync(
     video_token="f9LHo9qcjkTKVMC1O8b_62OLxJsPk0_8edD0clywyQ2lv0GN5P0QBI5aikR"
-))
+)
 ```
 
 ## Ответ {#response}

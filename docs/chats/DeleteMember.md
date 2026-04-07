@@ -20,21 +20,21 @@
 *Синхронный запрос:* 
 
 ```python
-bot.chats.DeleteMember(DeleteMemberReq(
+bot.chats.DeleteMember(
     chat_id=123456789,
     user_id=55555,
     block=true
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.DeleteMemberAsync(DeleteMemberReq(
+await bot.chats.DeleteMemberAsync(
     chat_id=123456789,
     user_id=55555,
     block=true
-))
+)
 ```
 
 ## Ответ {#response}

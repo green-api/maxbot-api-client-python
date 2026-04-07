@@ -17,13 +17,13 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.chats.GetChat(GetChatReq(chat_id=123456789))
+response = bot.chats.GetChat(chat_id=123456789)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatAsync(GetChatReq(chat_id=123456789))
+response = await bot.chats.GetChatAsync(chat_id=123456789)
 ```
 
 ## Ответ {#response}

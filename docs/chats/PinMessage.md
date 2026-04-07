@@ -19,21 +19,21 @@
 *Синхронный запрос:* 
 
 ```python
-bot.chats.PinMessage(PinMessageReq(
+bot.chats.PinMessage(
     chat_id=123456789,
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     notify=true
-))
+)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.PinMessageAsync(PinMessageReq(
+await bot.chats.PinMessageAsync(
     chat_id=123456789,
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     notify=true
-))
+)
 ```
 
 ## Ответ {#response}
