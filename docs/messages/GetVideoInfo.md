@@ -17,7 +17,7 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.messages.GetVideoInfo(
+response = bot.messages.get_video_info(
     video_token="f9LHo9qcjkTKVMC1O8b_62OLxJsPk0_8edD0clywyQ2lv0GN5P0QBI5aikR"
 )
 ```
@@ -25,7 +25,7 @@ response = bot.messages.GetVideoInfo(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.GetVideoInfoAsync(
+response = await bot.messages.get_video_info_async(
     video_token="f9LHo9qcjkTKVMC1O8b_62OLxJsPk0_8edD0clywyQ2lv0GN5P0QBI5aikR"
 )
 ```

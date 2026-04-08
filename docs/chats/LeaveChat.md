@@ -17,13 +17,13 @@
 *Синхронный запрос:*
 
 ```python
-bot.chats.LeaveChat(chat_id=123456789)
+bot.chats.leave_chat(chat_id=123456789)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.LeaveChatAsync(chat_id=123456789)
+await bot.chats.leave_chat_async(chat_id=123456789)
 ```
 
 ## Ответ {#response}

@@ -35,13 +35,13 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.subscriptions.GetUpdates()
+response = bot.subscriptions.get_updates()
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.subscriptions.GetUpdatesAsync(
+response = await bot.subscriptions.get_updates_async(
     limit=10, 
     timeout=20,
     types=[

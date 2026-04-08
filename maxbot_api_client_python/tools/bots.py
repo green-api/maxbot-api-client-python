@@ -1,4 +1,6 @@
-from maxbot_api_client_python.client import Client, decode, adecode
+from typing import Any
+
+from maxbot_api_client_python.client import Client
 from maxbot_api_client_python.types.constants import Paths
 from maxbot_api_client_python.types.models import BotInfo, BotPatch
 
@@ -6,47 +8,49 @@ class Bots:
     def __init__(self, client: Client):
         self.client = client
 
-    def GetBot(self) -> BotInfo:
+    def get_bot(self) -> BotInfo:
         """
         Retrieves information about the current bot, such as its user ID, name, and description.
 
         Example:
-            response = api.bots.GetBot()
+            response = bot.bots.get_bot()
         """
-        return decode(self.client, "GET", Paths.ME, BotInfo)
+        return self.client.decode("GET", Paths.ME, BotInfo)
 
-    def PatchBot(self, **kwargs) -> BotInfo:
+    def patch_bot(self, **kwargs: Any) -> BotInfo:
         """
         Edits current bot info.
         Fill only the fields you want to update - all remaining fields will stay untouched.
 
         Example:
-            response = api.bots.PatchBot(
+            response = bot.bots.patch_bot(
                 name="New Name",
                 description="New description"
             )
         """
         req = BotPatch(**kwargs)
-        return decode(self.client, "PATCH", Paths.ME, BotInfo, payload=req)
+        query, payload = self.client.split_request(req)
+        return self.client.decode("PATCH", Paths.ME, BotInfo, query=query, payload=payload)
     
-    async def GetBotAsync(self) -> BotInfo:
+    async def get_bot_async(self) -> BotInfo:
         """
-        Async version of GetBot.
+        Async version of get_bot.
         
         Example:
-            response = await api.bots.GetBotAsync()
+            response = await bot.bots.get_bot_async()
         """
-        return await adecode(self.client, "GET", Paths.ME, BotInfo)
+        return await self.client.adecode("GET", Paths.ME, BotInfo)
     
-    async def PatchBotAsync(self, **kwargs) -> BotInfo:
+    async def patch_bot_async(self, **kwargs: Any) -> BotInfo:
         """
-        Async version of PatchBot.
+        Async version of patch_bot.
 
         Example:
-            response = await api.bots.PatchBotAsync(
+            response = await bot.bots.patch_bot_async(
                 name="New Name",
                 description="New description"
             )
         """
         req = BotPatch(**kwargs)
-        return await adecode(self.client, "PATCH", Paths.ME, BotInfo, payload=req)
+        query, payload = self.client.split_request(req)
+        return await self.client.adecode("PATCH", Paths.ME, BotInfo, query=query, payload=payload)

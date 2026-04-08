@@ -24,7 +24,7 @@
 *Синхронный запрос:*
 
 ```python
-bot.chats.SendAction(
+bot.chats.send_action(
     chat_id=123456789,
     action="typing_on"
 )
@@ -33,7 +33,7 @@ bot.chats.SendAction(
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.SendActionAsync(
+await bot.chats.send_action_async(
     chat_id=123456789,
     action="typing_on"
 )

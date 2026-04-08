@@ -1,4 +1,4 @@
-from maxbot_api_client_python.api import API, Config
+from maxbot_api_client_python import API, Config
 
 def main():
     try:
@@ -9,11 +9,11 @@ def main():
             timeout=30
         )) as bot:
             
-            bot.messages.SendMessage(
-                user_id=1234567890,
+            bot.messages.send_message(
+                user_id=123456789,    # recipient user ID
                 text="Hello world!"
             )
-            print("SendMessage success!")
+            print("send_message success!")
             
     except Exception as e:
         print(f"Error: {e}")

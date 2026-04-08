@@ -20,7 +20,7 @@
 *Синхронный запрос:* 
 
 ```python
-bot.chats.DeleteMember(
+bot.chats.delete_member(
     chat_id=123456789,
     user_id=55555,
     block=true
@@ -30,7 +30,7 @@ bot.chats.DeleteMember(
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.DeleteMemberAsync(
+await bot.chats.delete_member_async(
     chat_id=123456789,
     user_id=55555,
     block=true

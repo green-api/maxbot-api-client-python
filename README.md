@@ -75,18 +75,18 @@ async with API(cfg) as bot:
 
 **Как получить информацию о боте:**
 
-* Ссылка на синхронный пример: [GetBot.py](./examples/sync/GetBot.py)
+* Ссылка на синхронный пример: [get_bot.py](./examples/sync/get_bot.py)
 
 ```python
 with API(cfg) as bot:
-    response = bot.bots.GetBot()
+    response = bot.bots.get_bot()
 ```
 
-* Ссылка на асинхронный пример: [GetBotAsync.py](./examples/async/GetBotAsync.py)
+* Ссылка на асинхронный пример: [get_bot_async.py](./examples/async/get_bot_async.py)
 
 ```python
 async with API(cfg) as bot:
-    response = await bot.bots.GetBotAsync()
+    response = await bot.bots.get_bot_async()
 ```
 
 **Как отправить сообщение:**
@@ -96,17 +96,17 @@ async with API(cfg) as bot:
 
 ```python
 with API(cfg) as bot:
-    response = bot.messages.SendMessage(
+    response = bot.messages.get_messages(
         user_id=1234567890,
         text="Hello world!"
     )
 ```
 
-* Ссылка на асинхронный пример: [SendMessageAsync.py](./examples/async/SendMessageAsync.py)
+* Ссылка на асинхронный пример: [get_messages_async.py](./examples/async/get_messages_async.py)
 
 ```python
 async with API(cfg) as bot:
-    response = await bot.messages.SendMessageAsync(
+    response = await bot.messages.get_messages_async(
         user_id=1234567890,
         text="Hello world from Async!"
     )
@@ -114,21 +114,21 @@ async with API(cfg) as bot:
 
 **Как легко отправить файл (по ссылке или локальный):**
 
-* Ссылка на синхронный пример: [SendFile.py](./examples/sync/SendFile.py)
+* Ссылка на синхронный пример: [send_file.py](./examples/sync/send_file.py)
 
 ```python
 with API(cfg) as bot:
-    response = bot.helpers.SendFile(
+    response = bot.helpers.send_file(
         chat_id=1234567890,
         text="Check this!",
         file_source="[https://http.cat/200.jpg](https://http.cat/200.jpg)"
     )
 ```
-* Ссылка на асинхронный пример: [SendFileAsync.py](./examples/async/SendFileAsync.py)
+* Ссылка на асинхронный пример: [send_file_async.py](./examples/async/send_file_async.py)
 
 ```python
 async with API(cfg) as bot:
-    response = await bot.helpers.SendFileAsync(
+    response = await bot.helpers.send_file_async(
         chat_id=1234567890,
         text="Посмотри на этот файл!",
         file_source="[https://http.cat/200.jpg](https://http.cat/200.jpg)"
@@ -137,25 +137,25 @@ async with API(cfg) as bot:
 
 **Как вручную загрузить файл (для кастомных вложений):**
 
-* Ссылка на синхронный пример: [UploadFile.py](./examples/sync/UploadFile.py)
+* Ссылка на синхронный пример: [upload_file.py](./examples/sync/upload_file.py)
 
 ```python
 from maxbot_api_client_python.types.constants import UploadType
 
 with API(cfg) as bot:
-    response = bot.uploads.UploadFile(
+    response = bot.uploads.upload_file(
         type=UploadType.image,
         file_path="examples/assets/file.jpg"
     )
 ```
 
-* Ссылка на асинхронный пример: [UploadFileAsync.py](./examples/async/UploadFileAsync.py)
+* Ссылка на асинхронный пример: [upload_file_async.py](./examples/async/upload_file_async.py)
 
 ```python
 from maxbot_api_client_python.types.constants import UploadType
 
 async with API(cfg) as bot:
-    response = await bot.uploads.UploadFileAsync(
+    response = await bot.uploads.upload_file_async(
         type=UploadType.image,
         file_path="examples/assets/file.jpg"
     )
@@ -190,13 +190,13 @@ async with API(cfg) as bot:
 | Описание                                       | Ссылка на пример                                             |
 | ---------------------------------------------- | ------------------------------------------------------------ |
 | Как отправить сообщение                        | [SendMessage.py](./examples/sync/SendMessage.py)             |
-| Как отправить сообщение *асинхронно*           | [SendMessageAsync.py](./examples/async/SendMessageAsync.py)  |
-| Как получить информацию о боте                 | [GetBot.py](./examples/sync/GetBot.py)                       |
-| Как получить информацию о боте *асинхронно*    | [GetBotAsync.py](./examples/async/GetBotAsync.py)            |
-| Как загрузить файл                             | [UploadFile.py](./examples/sync/UploadFile.py)               |
-| Как загрузить файл *асинхронно*                | [UploadFileAsync.py](./examples/async/UploadFileAsync.py)    |
-| Как отправить файл                             | [SendFile.py](./examples/sync/SendFile.py)                   |
-| Как отправить файл *асинхронно*                | [SendFileAsync.py](./examples/async/SendFileAsync.py)        |
+| Как отправить сообщение *асинхронно*           | [get_messages_async.py](./examples/async/get_messages_async.py)  |
+| Как получить информацию о боте                 | [get_bot.py](./examples/sync/get_bot.py)                       |
+| Как получить информацию о боте *асинхронно*    | [get_bot_async.py](./examples/async/get_bot_async.py)            |
+| Как загрузить файл                             | [upload_file.py](./examples/sync/upload_file.py)               |
+| Как загрузить файл *асинхронно*                | [upload_file_async.py](./examples/async/upload_file_async.py)    |
+| Как отправить файл                             | [send_file.py](./examples/sync/send_file.py)                   |
+| Как отправить файл *асинхронно*                | [send_file_async.py](./examples/async/send_file_async.py)        |
 | Как получить входящее уведомление              | [GetUpdates.py](./examples/sync/GetUpdates.py)               |
 | Как получить входящее уведомление *асинхронно* | [GetUpdatesAsync.py](./examples/async/GetUpdatesAsync.py)    |
 
@@ -204,10 +204,10 @@ async with API(cfg) as bot:
 
 | Метод API       | Описание                | Ссылка на документацию MAX                     | Ссылка на документацию библиотеки            |
 |-----------------|-------------------------|------------------------------------------------|----------------------------------------------|
-| `Bots.GetBot`    | Получает информацию о боте | [GetBot](https://dev.max.ru/docs-api/methods/GET/me) | [GetBot](https://green-api.com/max-bot-api/docs/api/bots/GetBot/) |
-| `Bots.PatchBot`  | Изменяет информацию о боте | | [PatchBot](https://green-api.com/max-bot-api/docs/api/bots/PatchBot/) |
-| `Chats.GetChats` | Возвращает список групповых чатов, в которых участвовал бот | [GetChats](https://dev.max.ru/docs-api/methods/GET/chats) | [GetChats](https://green-api.com/max-bot-api/docs/api/chats/GetChats) |
-| `Chats.GetChat`  | Возвращает информацию о групповом чате по его ID | [GetChat](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-) | [GetChat](https://green-api.com/max-bot-api/docs/api/chats/GetChat) |
+| `Bots.get_bot`    | Получает информацию о боте | [get_bot](https://dev.max.ru/docs-api/methods/GET/me) | [get_bot](https://green-api.com/max-bot-api/docs/api/bots/get_bot/) |
+| `Bots.patch_bot`  | Изменяет информацию о боте | | [patch_bot](https://green-api.com/max-bot-api/docs/api/bots/patch_bot/) |
+| `Chats.get_chats` | Возвращает список групповых чатов, в которых участвовал бот | [get_chats](https://dev.max.ru/docs-api/methods/GET/chats) | [get_chats](https://green-api.com/max-bot-api/docs/api/chats/get_chats) |
+| `Chats.get_chat`  | Возвращает информацию о групповом чате по его ID | [get_chat](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-) | [get_chat](https://green-api.com/max-bot-api/docs/api/chats/get_chat) |
 | `Chats.EditChat` | Позволяет редактировать информацию о групповом чате | [EditChat](https://dev.max.ru/docs-api/methods/PATCH/chats/-chatId-) | [EditChat](https://green-api.com/max-bot-api/docs/api/chats/EditChat) |
 | `Chats.DeleteChat` | Удаляет групповой чат для всех участников | [DeleteChat](https://dev.max.ru/docs-api/methods/DELETE/chats/-chatId-) | [DeleteChat](https://green-api.com/max-bot-api/docs/api/chats/DeleteChat) |
 | `Chats.SendAction` | Позволяет отправлять следующие действия бота в групповой чат | [SendAction](https://dev.max.ru/docs-api/methods/POST/chats/-chatId-/actions) | [SendAction](https://green-api.com/max-bot-api/docs/api/chats/SendAction) |
@@ -216,7 +216,7 @@ async with API(cfg) as bot:
 | `Chats.UnpinMessage` | Удаляет закрепленное сообщение в групповом чате | [UnpinMessage](https://dev.max.ru/docs-api/methods/DELETE/chats/-chatId-/pin) | [UnpinMessage](https://green-api.com/max-bot-api/docs/api/chats/UnpinMessage) |
 | `Chats.GetChatMembership` | Возвращает членство бота в групповом чате | [GetChatMembership](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-/members/me) | [GetChatMembership](https://green-api.com/max-bot-api/docs/api/chats/GetChatMembership) |
 | `Chats.LeaveChat` | Удаляет бота из группового чата | [LeaveChat](https://dev.max.ru/docs-api/methods/DELETE/chats/-chatId-/members/me) | [LeaveChat](https://green-api.com/max-bot-api/docs/api/chats/LeaveChat) |
-| `Chats.GetChatAdmins` | Возвращает список всех администраторов группового чата | [GetChatAdmins](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-/members/admins) | [GetChatAdmins](https://green-api.com/max-bot-api/docs/api/chats/GetChatAdmins) |
+| `Chats.get_chatAdmins` | Возвращает список всех администраторов группового чата | [get_chatAdmins](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-/members/admins) | [get_chatAdmins](https://green-api.com/max-bot-api/docs/api/chats/get_chatAdmins) |
 | `Chats.SetChatAdmins` | Назначает участника группы администратором | [SetChatAdmins](https://dev.max.ru/docs-api/methods/POST/chats/-chatId-/members/admins) | [SetChatAdmins](https://green-api.com/max-bot-api/docs/api/chats/SetChatAdmins) |
 | `Chats.DeleteAdmin` | Отменяет права администратора пользователя в групповом чате | [DeleteAdmin](https://dev.max.ru/docs-api/methods/DELETE/chats/-chatId-/members/admins/-userId-) | [DeleteAdmin](https://green-api.com/max-bot-api/docs/api/chats/DeleteAdmin) |
 | `Chats.GetChatMembers`     | Возвращает список участников группового чата | [GetChatMembers](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-/members) | [GetChatMembers](https://green-api.com/max-bot-api/docs/api/chats/GetChatMembers) |
@@ -226,8 +226,8 @@ async with API(cfg) as bot:
 | `Subscriptions.Subscribe`        | Настраивает доставку событий бота через веб-хук | [Subscribe](https://dev.max.ru/docs-api/methods/POST/subscriptions) | [Subscribe](https://green-api.com/max-bot-api/docs/api/subscriptions/Subscribe.md)  |
 | `Subscriptions.Unsubscribe` | Отменяет подписку бота на получение обновлений через веб-хук | [Unsubscribe](https://dev.max.ru/docs-api/methods/DELETE/subscriptions) | [Unsubscribe](https://green-api.com/max-bot-api/docs/api/subscriptions/Unsubscribe) |
 | `Subscriptions.GetUpdates` | Получает входящие обновления | [GetUpdates](https://dev.max.ru/docs-api/methods/GET/updates) | [GetUpdates](https://green-api.com/max-bot-api/docs/api/subscriptions/GetUpdates) |
-| `Upload.UploadFile` | Загружает файл на серверы MAX для последующей передачи | [UploadFile](https://dev.max.ru/docs-api/methods/POST/uploads) | [UploadFile](https://green-api.com/max-bot-api/docs/upload/UploadFile) |
-| `Helpers.SendFile` | Упрощает отправку файлов, автоматически определяя URL или путь | | [SendFile](https://green-api.com/max-bot-api/docs/helpers/SendFile) |
+| `Upload.upload_file` | Загружает файл на серверы MAX для последующей передачи | [upload_file](https://dev.max.ru/docs-api/methods/POST/uploads) | [upload_file](https://green-api.com/max-bot-api/docs/upload/upload_file) |
+| `Helpers.send_file` | Упрощает отправку файлов, автоматически определяя URL или путь | | [send_file](https://green-api.com/max-bot-api/docs/helpers/send_file) |
 | `Messages.GetMessages` | Возвращает информацию о сообщении или массив сообщений из чата | [GetMessages](https://dev.max.ru/docs-api/methods/GET/messages) | [GetMessages](https://green-api.com/max-bot-api/docs/api/messages/GetMessages) |
 | `Messages.SendMessage` | Отправляет текстовое или медиа-сообщение указанному пользователю или в чат | [SendMessage](https://dev.max.ru/docs-api/methods/POST/messages) | [SendMessage](https://green-api.com/max-bot-api/docs/api/messages/SendMessage) |
 | `Messages.EditMessage` | Редактирует текст или медиафайл ранее отправленного сообщения | [EditMessage](https://dev.max.ru/docs-api/methods/PUT/messages) | [EditMessage](https://green-api.com/max-bot-api/docs/api/messages/EditMessage) |

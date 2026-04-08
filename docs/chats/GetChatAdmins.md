@@ -1,4 +1,4 @@
-# GetChatAdmins
+# get_chatAdmins
 
 [dev.max.ru/docs-api/methods/GET/chats/-chatId-/members/admins](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-/members/admins)
 
@@ -17,13 +17,13 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.GetChatAdmins(chat_id=123456789)
+response = bot.chats.get_chat_admins(chat_id=123456789)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatAdminsAsync(chat_id=123456789)
+response = await bot.chats.get_chat_admins_async(chat_id=123456789)
 ```
 
 ## Ответ {#response}

@@ -1,4 +1,4 @@
-from maxbot_api_client_python.api import API, Config
+from maxbot_api_client_python import API, Config
 
 def main():
     try:
@@ -9,7 +9,7 @@ def main():
             timeout=30
         )) as bot:
 
-            response = bot.subscriptions.GetUpdates()
+            response = bot.subscriptions.get_updates()
             print(f"New update received:\n{response.model_dump_json(indent=4)}")
             
     except Exception as e:

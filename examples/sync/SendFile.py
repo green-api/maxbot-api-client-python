@@ -1,4 +1,4 @@
-from maxbot_api_client_python.api import API, Config
+from maxbot_api_client_python import API, Config
 
 def main():
     try:
@@ -9,16 +9,16 @@ def main():
             timeout=30
         )) as bot:
 
-            response = bot.helpers.SendFile(
-                user_id=1234567890,
+            response = bot.helpers.send_file(
+                user_id=123456789,    # recipient user ID
                 text="Check this!",
-                file_source="https://http.cat/200.jpg"
+                file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
             )
             
             if response:
-                print("SendFile success!")
+                print("send_file success!")
             else:
-                print("SendFile failed to process the file.")
+                print("send_file failed to process the file.")
             
     except Exception as e:
         print(f"Error: {e}")

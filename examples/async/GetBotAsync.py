@@ -1,5 +1,5 @@
 import asyncio
-from maxbot_api_client_python.api import API, Config
+from maxbot_api_client_python import API, Config
 
 async def main():
     try:
@@ -10,7 +10,7 @@ async def main():
             timeout=30
         )) as bot:
             
-            response = await bot.bots.GetBotAsync()
+            response = await bot.bots.get_bot_async()
             print(f"Bot info received:\n{response.model_dump_json(indent=4)}")
             
     except Exception as e:

@@ -1,58 +1,14 @@
-import asyncio, httpx, json, logging, time, threading
-from dataclasses import dataclass
+import asyncio, httpx, logging, time, threading
 from functools import wraps
-from typing import Any
+from typing import Any, TypeVar, Type
 from urllib.parse import urljoin
 
 from maxbot_api_client_python.exceptions import build_api_error
+from maxbot_api_client_python.types.models import Config
+
 logger = logging.getLogger(__name__)
 
-class RateLimiter:
-    def __init__(self, rps: int):
-        self._lock = threading.Lock()
-        self._alock = asyncio.Lock()
-        self.last_request_time = 0.0
-        self.set_limit(rps)
-
-    def set_limit(self, rps: int) -> None:
-        self.limit = rps
-        self.interval = 1.0 / rps if rps > 0 else 0.0
-
-    def wait(self) -> None:
-        if self.interval <= 0:
-            return
-
-        with self._lock:
-            now = time.monotonic()
-            elapsed = now - self.last_request_time
-            delay = max(0.0, self.interval - elapsed)
-            self.last_request_time = now + delay 
-            
-        if delay > 0:
-            time.sleep(delay)
-
-    async def async_wait(self) -> None:
-        if self.interval <= 0:
-            return
-
-        async with self._alock:
-            now = time.monotonic()
-            elapsed = now - self.last_request_time
-            delay = max(0.0, self.interval - elapsed)
-            self.last_request_time = now + delay
-            
-        if delay > 0:
-            await asyncio.sleep(delay)
-
-@dataclass
-class Config:
-    base_url: str
-    token: str
-    timeout: int = 35
-    ratelimiter: int = 25
-    max_retries: int = 3
-    retry_delay_sec: int = 3
-
+T = TypeVar('T')
 class Client:
     def __init__(self, cfg: Config):
         if not cfg.base_url or not cfg.token:
@@ -62,14 +18,46 @@ class Client:
         self.token = cfg.token
 
         self.timeout = cfg.timeout if cfg.timeout > 0 else 35
-        self.global_limiter = RateLimiter(cfg.ratelimiter if cfg.ratelimiter > 0 else 25)
         self.max_retries = cfg.max_retries
         self.retry_delay_sec = cfg.retry_delay_sec
+
+        rps = cfg.ratelimiter if cfg.ratelimiter > 0 else 25
+        self._limiter_interval = 1.0 / rps if rps > 0 else 0.0
+        self._sync_lock = threading.Lock()
+        self._async_lock: asyncio.Lock | None = None
+        self._last_request_time = 0.0
 
         self.headers = {"Authorization": self.token}
 
         self._sync_client = httpx.Client(timeout=self.timeout)
         self._async_client: httpx.AsyncClient | None = None
+
+    def _get_delay(self) -> float:
+        if self._limiter_interval <= 0:
+            return 0.0
+        now = time.monotonic()
+        elapsed = now - self._last_request_time
+        delay = max(0.0, self._limiter_interval - elapsed)
+        self._last_request_time = now + delay
+        return delay
+
+    def _wait_limit(self) -> None:
+        if self._limiter_interval <= 0:
+            return
+        with self._sync_lock:
+            delay = self._get_delay()
+        if delay > 0:
+            time.sleep(delay)
+
+    async def _await_limit(self) -> None:
+        if self._limiter_interval <= 0:
+            return
+        if self._async_lock is None:
+            self._async_lock = asyncio.Lock()
+        async with self._async_lock:
+            delay = self._get_delay()
+        if delay > 0:
+            await asyncio.sleep(delay)
 
     def __enter__(self) -> "Client":
         return self
@@ -94,6 +82,7 @@ class Client:
     async def aclose(self) -> None:
         if self._async_client:
             await self._async_client.aclose()
+            self._async_client = None
 
     def _build_url(self, path: str) -> str:
         if path.startswith(("http://", "https://")):
@@ -105,6 +94,30 @@ class Client:
             return payload.model_dump(exclude_none=True)
         return payload
 
+    def split_request(self, req: Any) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+        if not hasattr(req, "model_fields"):
+            return None, self._prepare_data(req)
+            
+        data = req.model_dump(exclude_none=True, by_alias=True)
+        query, payload = {}, {}
+        
+        for field_name, field in req.model_fields.items():
+            key = field.alias or field_name
+            if key not in data:
+                continue
+                
+            extra = field.json_schema_extra
+            extra_dict = extra if isinstance(extra, dict) else {}
+            
+            if extra_dict.get("in_path"):
+                continue
+            elif extra_dict.get("in_query"):
+                query[key] = data[key]
+            else:
+                payload[key] = data[key]
+                
+        return (query if query else None, payload if payload else None)
+
     def request(
         self, 
         method: str, 
@@ -113,7 +126,7 @@ class Client:
         payload: Any = None, 
         files: dict[str, Any] | None = None
     ) -> bytes:
-        self.global_limiter.wait()
+        self._wait_limit()
         
         headers = self.headers.copy()
         if not files:
@@ -128,7 +141,6 @@ class Client:
             files=files,
             headers=headers
         )
-        logger.debug(f"Response body: {response.text}")
         return self._handle_response(response)
 
     async def arequest(
@@ -139,7 +151,7 @@ class Client:
         payload: Any = None, 
         files: dict[str, Any] | None = None
     ) -> bytes:
-        await self.global_limiter.async_wait()
+        await self._await_limit()
         
         api = await self.get_async_client()
         headers = self.headers.copy()
@@ -155,7 +167,6 @@ class Client:
             files=files,
             headers=headers
         )
-        logger.debug(f"Response body: {response.text}")
         return self._handle_response(response)
 
     def _handle_response(self, response: httpx.Response) -> bytes:
@@ -163,33 +174,20 @@ class Client:
             raise build_api_error(response)
         return response.content
     
-    def _parse_response[T](self, data: bytes, model_class: type[T]) -> T:
-        if not data or data.strip() == b"":
-            return model_class()
-        if data.strip() == b'<retval>1</retval>':
-            return model_class()
-        
+    def _parse_response(self, data: bytes, model_class: Type[T]) -> T:
+        if not data or data.strip() in (b"", b"<retval>1</retval>"):
+            return model_class.model_construct()
         try:
-            parsed_json = json.loads(data)
-        except json.JSONDecodeError:
-            decoded_snippet = data[:100].decode('utf-8', errors='replace')
-            logger.warning(f"Server returned non-JSON response: {decoded_snippet}")
-            return model_class()
-
-        if hasattr(model_class, "model_validate"):
-            return model_class.model_validate(parsed_json)
-        return parsed_json
+            return model_class.model_validate_json(data)
+        except Exception as e:
+            logger.error(f"Server returned invalid response. Size: {len(data)} bytes.")
+            failed_response = httpx.Response(status_code=500, content=data, request=httpx.Request("GET", self.base_url))
+            raise build_api_error(failed_response) from e
     
-def decode[T](client: Client, method: str, path: str, model_class: type[T], **kwargs: Any) -> T:
-    response = client.request(method, path, **kwargs)
-    return client._parse_response(response, model_class)
+    def decode(self, method: str, path: str, model_class: type[T], **kwargs: Any) -> T:
+        response = self.request(method, path, **kwargs)
+        return self._parse_response(response, model_class)
 
-async def adecode[T](client: Client, method: str, path: str, model_class: type[T], **kwargs: Any) -> T:
-    response = await client.arequest(method, path, **kwargs)
-    return client._parse_response(response, model_class)
-
-def as_async(func: Any) -> Any:
-    @wraps(func)
-    async def wrapper(*args: Any, **kwargs: Any) -> Any:
-        return await asyncio.to_thread(func, *args, **kwargs)
-    return wrapper
+    async def adecode(self, method: str, path: str, model_class: type[T], **kwargs: Any) -> T:
+        response = await self.arequest(method, path, **kwargs)
+        return self._parse_response(response, model_class)

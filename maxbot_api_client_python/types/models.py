@@ -6,6 +6,14 @@ from maxbot_api_client_python.types.constants import (
     LinkedMessageType, SenderAction, ChatAdminPermission, ButtonType, UploadType
 )
 
+class Config(BaseModel):
+    base_url: str
+    token: str
+    timeout: int = 35
+    ratelimiter: int = 25
+    max_retries: int = 3
+    retry_delay_sec: int = 3
+
 class MaxBotModel(BaseModel):
     model_config = ConfigDict(populate_by_name=True, arbitrary_types_allowed=True)
 
@@ -14,9 +22,8 @@ class APIError(MaxBotModel):
     message: str
 
 class SimpleQueryResult(MaxBotModel):
-    success: bool = Field(..., alias="success")
+    success: bool = Field(True, alias="success")
     message: str | None = Field(None, alias="message")
-
 
 class User(MaxBotModel):
     user_id: int
@@ -59,7 +66,6 @@ class Recipient(MaxBotModel):
     chat_type: ChatType
     user_id: int | None = None
 
-
 class Image(MaxBotModel):
     url: str
 
@@ -75,7 +81,6 @@ class ImagePayload(MaxBotModel):
 class StickerData(MaxBotModel):
     url: str | None = None
     code: str | None = None
-
 
 class MediaPayload(MaxBotModel):
     url: str | None = None
@@ -142,14 +147,12 @@ class Attachment(MaxBotModel):
     latitude: float | None = None
     longitude: float | None = None
 
-
 class BotPatch(MaxBotModel):
     name: str | None = None
     username: str | None = None
     description: str | None = None
     commands: list[BotCommand] | None = None
     photo: PhotoAttachmentRequestPayload | None = None
-
 
 class MarkupElement(MaxBotModel):
     type: MarkupType
@@ -195,7 +198,6 @@ class Message(MaxBotModel):
 class MessagesList(MaxBotModel):
     messages: list[Message]
 
-
 class Chat(MaxBotModel):
     chat_id: int
     type: ChatType
@@ -226,10 +228,9 @@ class ChatInfo(MaxBotModel):
     is_public: bool
     link: str | None = None
     description: str | None = None
-    dialog_with_user: list[DialogWithUser] | None = None
+    dialog_with_user: DialogWithUser | None = None
     chat_message_id: str | None = None
-    pinned_message: list[Message] | None = None
-
+    pinned_message: Message | None = None
 
 class Callback(MaxBotModel):
     timestamp: int
@@ -258,73 +259,89 @@ class Subscription(MaxBotModel):
     time: int
     update_types: list[UpdateType] | None = None
 
-
 class GetChatsReq(MaxBotModel):
-    count: int | None = Field(None, alias="count")
-    marker: int | None = Field(None, alias="marker")
+    count: int | None = Field(None, alias="count", json_schema_extra={"in_query": True})
+    marker: int | None = Field(None, alias="marker", json_schema_extra={"in_query": True})
 
 class GetChatsResp(MaxBotModel):
     chats: list[Chat]
     marker: int | None = None
 
 class GetChatReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    # API Path: GET /chats/{chatId}
+    # Path parameters strictly use camelCase.
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
 
 class EditChatReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    # API Path: PATCH /chats/{chatId}
+    # Path parameters strictly use camelCase.
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
     icon: Image | None = None
     title: str | None = None
     pin: str | None = None
     notify: bool | None = None
 
 class DeleteChatReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    # API Path: DELETE /chats/{chatId}
+    # Path parameters strictly use camelCase.
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
 
 class SendActionReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    # API Path: POST /chats/{chatId}/actions
+    # Path parameters strictly use camelCase.
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
     action: SenderAction
 
 class PinMessageReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
     message_id: str
     notify: bool | None = None
 
 class UnpinMessageReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
 
 class GetPinnedMessageReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
 
 class GetChatMembershipReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
 
 class LeaveChatReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
 
 class GetChatAdminsReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
 
 class GetChatAdminsResp(MaxBotModel):
     members: list[ChatMember]
     marker: int | None = None
 
+class GetChatMembersResp(MaxBotModel):
+    members: list[ChatMember]
+    marker: int | None = None
+    
 class SetChatAdminsReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
     admins: list[ChatAdmin]
     marker: int | None = None
 
 class DeleteAdminReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
-    user_id: int = Field(..., alias="userId")
+    # API Path: DELETE /chats/{chatId}/members/admins/{userId}
+    # Both path parameters require camelCase according to the API specification.
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
+    user_id: int = Field(..., alias="userId", json_schema_extra={"in_path": True})
 
 class GetChatMembersReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
-    user_ids: list[int] | None = Field(None, alias="user_ids")
-    marker: int | None = Field(None, alias="marker")
-    count: int | None = Field(None, alias="count")
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
+    user_ids: list[int] | None = Field(None, alias="user_ids", json_schema_extra={"in_query": True})
+    marker: int | None = Field(None, alias="marker", json_schema_extra={"in_query": True})
+    count: int | None = Field(None, alias="count", json_schema_extra={"in_query": True})
 
 class AddMembersReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
+    # API Path: POST /chats/{chatId}/members
+    # Path uses camelCase ('chatId'). 
+    # Payload array must be strictly serialized as 'user_ids' (snake_case).
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
     user_ids: list[int] | None = None
 
 class FailedUserDetails(MaxBotModel):
@@ -336,33 +353,28 @@ class AddMembersResp(SimpleQueryResult):
     failed_user_details: list[FailedUserDetails] | None = Field(None, alias="failed_user_details")
 
 class DeleteMemberReq(MaxBotModel):
-    chat_id: int = Field(..., alias="chatId")
-    user_id: int = Field(..., alias="userId")
-    block: bool | None = Field(None, alias="block")
-
-
-class GetMessagesReq(MaxBotModel):
-    chat_id: int | None = Field(None, alias="chat_id")
-    message_ids: list[str] | None = Field(None, alias="message_ids")
-    from_: int | None = Field(None, alias="from")
-    to: int | None = Field(None, alias="to")
-    count: int | None = Field(None, alias="count")
+    # API Path: DELETE /chats/{chatId}/members?user_id={user_id}&block=true
+    # Mixed conventions: Path parameter is camelCase ('chatId'), 
+    # but query parameters use snake_case ('user_id').
+    chat_id: int = Field(..., alias="chatId", json_schema_extra={"in_path": True})
+    user_id: int = Field(..., alias="user_id", json_schema_extra={"in_query": True})
+    block: bool | None = Field(None, alias="block", json_schema_extra={"in_query": True})
 
 class SendMessageReq(MaxBotModel):
-    user_id: int | None = Field(None, alias="user_id")
-    chat_id: int | None = Field(None, alias="chat_id")
+    user_id: int | None = Field(None, alias="user_id", json_schema_extra={"in_query": True})
+    chat_id: int | None = Field(None, alias="chat_id", json_schema_extra={"in_query": True})
     text: str | None = None
     format: Format | None = None
     notify: bool | None = None
     attachments: list[Attachment] | None = None
     link: NewMessageLink | None = None
-    disable_link_preview: bool | None = Field(None, alias="disable_link_preview")
+    disable_link_preview: bool | None = Field(None, alias="disable_link_preview", json_schema_extra={"in_query": True})
 
 class SendMessageResp(MaxBotModel):
     message: Message
 
 class EditMessageReq(MaxBotModel):
-    message_id: str = Field(..., alias="message_id")
+    message_id: str = Field(..., alias="message_id", json_schema_extra={"in_query": True})
     text: str | None = None
     attachments: list[Attachment] | None = None
     link: NewMessageLink | None = None
@@ -370,10 +382,17 @@ class EditMessageReq(MaxBotModel):
     format: Format | None = None
 
 class DeleteMessageReq(MaxBotModel):
-    message_id: str = Field(..., alias="message_id")
+    message_id: str = Field(..., alias="message_id", json_schema_extra={"in_query": True})
 
 class GetMessageReq(MaxBotModel):
-    message_id: str = Field(..., alias="message_id")
+    message_id: str = Field(..., alias="message_id", json_schema_extra={"in_path": True})
+
+class GetMessagesReq(MaxBotModel):
+    chat_id: int | None = Field(None, alias="chat_id", json_schema_extra={"in_query": True})
+    message_ids: list[str] | None = Field(None, alias="message_ids", json_schema_extra={"in_query": True})
+    from_: int | None = Field(None, alias="from", json_schema_extra={"in_query": True})
+    to: int | None = Field(None, alias="to", json_schema_extra={"in_query": True})
+    count: int | None = Field(None, alias="count", json_schema_extra={"in_query": True})
 
 class VideoUrls(MaxBotModel):
     mp4_1080: str | None = None
@@ -391,7 +410,7 @@ class VideoInfo(MaxBotModel):
     url: str
 
 class GetVideoInfoReq(MaxBotModel):
-    video_token: str = Field(..., alias="video_token")
+    video_token: str = Field(..., alias="video_token", json_schema_extra={"in_path": True})
 
 class GetVideoInfoResp(MaxBotModel):
     token: str
@@ -402,21 +421,20 @@ class GetVideoInfoResp(MaxBotModel):
     duration: int | None = None
 
 class AnswerCallbackReq(MaxBotModel):
-    callback_id: str = Field(..., alias="callback_id")
+    callback_id: str = Field(..., alias="callback_id", json_schema_extra={"in_query": True})
     message: NewMessageBody | None = None
     notification: str | None = None
 
 class SendFileReq(MaxBotModel):
-    user_id: int | None = Field(None, alias="user_id")
-    chat_id: int | None = Field(None, alias="chat_id")
+    user_id: int | None = Field(None, alias="userId", json_schema_extra={"in_query": True})
+    chat_id: int | None = Field(None, alias="chatId", json_schema_extra={"in_query": True})
     text: str | None = None
     format: Format | None = None
     notify: bool | None = None
-    file_source: str
+    file_source: str = Field(..., json_schema_extra={"in_path": True})
     link: NewMessageLink | None = None
-    disable_link_preview: bool | None = Field(None, alias="disable_link_preview")
+    disable_link_preview: bool | None = Field(None, alias="disable_link_preview", json_schema_extra={"in_query": True})
     attachments: list[Attachment] | None = None
-
 
 class GetSubscriptionsResp(MaxBotModel):
     subscriptions: list[Subscription]
@@ -427,26 +445,25 @@ class SubscribeReq(MaxBotModel):
     secret: str | None = None
 
 class UnsubscribeReq(MaxBotModel):
-    url: str = Field(..., alias="url")
+    url: str = Field(..., alias="url", json_schema_extra={"in_query": True})
 
 class GetUpdatesReq(MaxBotModel):
-    limit: int | None = Field(None, alias="limit")
-    timeout: int | None = Field(None, alias="timeout")
-    marker: int | None = Field(None, alias="marker")
-    types: list[UpdateType] | None = Field(None, alias="types")
+    limit: int | None = Field(None, alias="limit", json_schema_extra={"in_query": True})
+    timeout: int | None = Field(None, alias="timeout", json_schema_extra={"in_query": True})
+    marker: int | None = Field(None, alias="marker", json_schema_extra={"in_query": True})
+    types: list[UpdateType] | None = Field(None, alias="types", json_schema_extra={"in_query": True})
 
 class GetUpdatesResp(MaxBotModel):
     updates: list[Update]
     marker: int
 
-
 class UploadFileReq(MaxBotModel):
-    type: UploadType = Field(..., alias="type")
-    upload_url: str | None = None
-    file_path: str | None = None
+    type: UploadType = Field(..., alias="type", json_schema_extra={"in_query": True})
+    upload_url: str | None = Field(None, json_schema_extra={"in_path": True})
+    file_path: str | None = Field(None, json_schema_extra={"in_path": True})
 
 class UploadTypeReq(MaxBotModel):
-    type: UploadType = Field(..., alias="type")
+    type: UploadType = Field(..., alias="type", json_schema_extra={"in_query": True})
 
 class UploadFileMultipartReq(MaxBotModel):
     upload_url: str
