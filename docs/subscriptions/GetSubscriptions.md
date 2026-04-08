@@ -11,13 +11,13 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.subscriptions.GetSubscriptions()
+response = bot.subscriptions.get_subscriptions()
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.subscriptions.GetSubscriptionsAsync()
+response = await bot.subscriptions.get_subscriptions_async()
 ```
 
 ## Ответ {#response}

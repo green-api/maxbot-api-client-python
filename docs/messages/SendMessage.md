@@ -24,7 +24,7 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.messages.SendMessage(
+response = bot.messages.get_messages(
     chat_id=123456,
     text="Hello, world!",
     notify=True
@@ -34,7 +34,7 @@ response = bot.messages.SendMessage(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.SendMessageAsync(
+response = await bot.messages.get_messages_async(
     chat_id=123456,
     text="Hello, world!",
     notify=True

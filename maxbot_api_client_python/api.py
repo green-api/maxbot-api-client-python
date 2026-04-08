@@ -1,6 +1,7 @@
 from typing import Any, Self
 
-from maxbot_api_client_python.client import Client, Config
+from maxbot_api_client_python.client import Client
+from maxbot_api_client_python.types.models import Config
 from maxbot_api_client_python import tools
 
 class API:

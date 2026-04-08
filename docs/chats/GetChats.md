@@ -1,4 +1,4 @@
-# GetChats
+# get_chats
 
 [dev.max.ru/docs-api/methods/GET/chats](https://dev.max.ru/docs-api/methods/GET/chats)
 
@@ -18,7 +18,7 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.chats.GetChats(
+response = bot.chats.get_chats(
     count=50,
     marker=1679823456
 )
@@ -27,7 +27,7 @@ response = bot.chats.GetChats(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatsAsync(
+response = await bot.chats.get_chats_async(
     count=50,
     marker=1679823456
 )

@@ -19,7 +19,7 @@
 *Синхронный запрос:* 
 
 ```python
-bot.chats.PinMessage(
+bot.chats.pin_message(
     chat_id=123456789,
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     notify=true
@@ -29,7 +29,7 @@ bot.chats.PinMessage(
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.PinMessageAsync(
+await bot.chats.pin_message_async(
     chat_id=123456789,
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     notify=true

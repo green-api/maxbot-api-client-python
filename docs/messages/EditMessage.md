@@ -22,7 +22,7 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.messages.EditMessage(
+response = bot.messages.edit_message(
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     text="Updated message text!",
     notify=False
@@ -32,7 +32,7 @@ response = bot.messages.EditMessage(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.EditMessageAsync(
+response = await bot.messages.edit_message_async(
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     text="Updated message text!",
     notify=False

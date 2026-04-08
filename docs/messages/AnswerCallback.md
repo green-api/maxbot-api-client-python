@@ -19,7 +19,7 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.messages.AnswerCallback(
+response = bot.messages.answer_callback(
     callback_id="f9LHodD0cOLW7qZQo5Yp4sWNbFSb7DnBL1K2N5O5vMYCShXQUyMx0IUn",
     message=NewMessageBody(
         text="Action confirmed!"
@@ -30,7 +30,7 @@ response = bot.messages.AnswerCallback(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.AnswerCallbackAsync(
+response = await bot.messages.answer_callback_async(
     callback_id="f9LHodD0cOLW7qZQo5Yp4sWNbFSb7DnBL1K2N5O5vMYCShXQUyMx0IUn",
     message=NewMessageBody(
         text="Action confirmed!"

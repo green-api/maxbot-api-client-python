@@ -1,4 +1,4 @@
-# GetChat
+# get_chat
 
 [dev.max.ru/docs-api/methods/GET/chats/-chatId-](https://dev.max.ru/docs-api/methods/GET/chats/-chatId-)
 
@@ -17,13 +17,13 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.chats.GetChat(chat_id=123456789)
+response = bot.chats.get_chat(chat_id=123456789)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatAsync(chat_id=123456789)
+response = await bot.chats.get_chat_async(chat_id=123456789)
 ```
 
 ## Ответ {#response}

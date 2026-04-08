@@ -37,7 +37,9 @@ def attach_sticker(url: str | None = None, code: str | None = None) -> Attachmen
     )
 
 def attach_contact(name: str, phone: str, contact_id: int | None = None) -> Attachment:
-    vcf_info = f"BEGIN:VCARD\nVERSION:3.0\nFN:{name}\nTEL:{phone}\nEND:VCARD"
+    safe_name = name.replace("\n", " ").replace("\r", "")
+    safe_phone = phone.replace("\n", "").replace("\r", "")
+    vcf_info = f"BEGIN:VCARD\nVERSION:3.0\nFN:{safe_name}\nTEL:{safe_phone}\nEND:VCARD"
     return Attachment(
         type=AttachmentType.CONTACT,
         payload=ContactAttachmentPayload(

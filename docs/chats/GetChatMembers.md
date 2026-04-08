@@ -20,7 +20,7 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.GetChatMembers(
+response = bot.chats.get_chat_members(
     chat_id=123456789,
     count=50
 )
@@ -29,7 +29,7 @@ response = bot.chats.GetChatMembers(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.GetChatMembersAsync(
+response = await bot.chats.get_chat_members_async(
     chat_id=123456789,
     count=50
 )

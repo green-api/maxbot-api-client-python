@@ -1,4 +1,5 @@
-from maxbot_api_client_python.api import API, Config
+from maxbot_api_client_python import API, Config
+from maxbot_api_client_python.types.models import GetUpdatesReq
 
 def main():
     try:
@@ -8,9 +9,10 @@ def main():
             ratelimiter=25,
             timeout=30
         )) as bot:
-            
-            response = bot.bots.GetBot()
-            print(f"Bot info received:\n{response.model_dump_json(indent=4)}")
+
+            req = GetUpdatesReq()
+            response = bot.subscriptions.get_updates(req)
+            print(f"New update received:\n{response.model_dump_json(indent=4)}")
             
     except Exception as e:
         print(f"Error: {e}")

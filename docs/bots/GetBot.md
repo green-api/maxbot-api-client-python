@@ -1,4 +1,4 @@
-# GetBot 
+# get_bot 
 
 [dev.max.ru/docs-api/methods/GET/me](https://dev.max.ru/docs-api/methods/GET/me)
 
@@ -11,13 +11,13 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.Bots.GetBot()
+response = bot.Bots.get_bot()
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.Bots.GetBotAsync()
+response = await bot.Bots.get_bot_async()
 ```
 
 ## Ответ {#response}

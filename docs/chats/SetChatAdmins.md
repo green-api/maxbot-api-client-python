@@ -38,7 +38,7 @@
 *Синхронный запрос:*
 
 ```python
-bot.chats.SetChatAdmins(
+bot.chats.set_chat_admins(
     chat_id=123456789,
     admins={
         {
@@ -56,7 +56,7 @@ bot.chats.SetChatAdmins(
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.SetChatAdminsAsync(
+await bot.chats.set_chat_admins_async(
     chat_id=123456789,
     admins={
         {

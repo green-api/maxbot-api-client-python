@@ -16,14 +16,14 @@
 |              |            |              | `audio` - MP3, WAV, M4A и другие                                                                                     |
 |              |            |              | `file` - любые типы файлов                                                                                           |
 | `file_path`  | **string** | Да           | Абсолютный или относительный путь к файлу на локальном диске.                                                        |
-| <nobr>`upload_url`<nobr> | **string** | Нет | Используется только для прямой загрузки, если URL уже получен. При вызове `UploadFile` заполняется автоматически. |
+| <nobr>`upload_url`<nobr> | **string** | Нет | Используется только для прямой загрузки, если URL уже получен. При вызове `upload_file` заполняется автоматически. |
 
 ### Пример запроса {#request-example}
 
 *Синхронный запрос:*
 
 ```python
-response = bot.uploads.UploadFile(
+response = bot.uploads.upload_file(
     type=UploadType.IMAGE,
     file_path="./photos/cat.png"
 )
@@ -32,7 +32,7 @@ response = bot.uploads.UploadFile(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.uploads.UploadFileAsync(
+response = await bot.uploads.upload_file_async(
     type=UploadType.IMAGE,
     file_path="./photos/cat.png"
 )

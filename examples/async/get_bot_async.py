@@ -1,22 +1,20 @@
-from maxbot_api_client_python.api import API, Config
+import asyncio
+from maxbot_api_client_python import API, Config
 
-def main():
+async def main():
     try:
-        with API(Config(
+        async with API(Config(
             base_url="https://platform-api.max.ru",
             token="YOUR_BOT_TOKEN",
             ratelimiter=25,
             timeout=30
         )) as bot:
             
-            bot.messages.SendMessage(
-                user_id=1234567890,
-                text="Hello world!"
-            )
-            print("SendMessage success!")
+            response = await bot.bots.get_bot_async()
+            print(f"Bot info received:\n{response.model_dump_json(indent=4)}")
             
     except Exception as e:
         print(f"Error: {e}")
-        
+
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

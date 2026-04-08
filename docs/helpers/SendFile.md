@@ -23,7 +23,7 @@
 *Синхронный запрос:*
 
 ```python
-bot.helpers.SendFile(
+bot.helpers.send_file(
     chat_id=123456789,
     text="Вот отчет за этот месяц",
     file_source="./reports/march.pdf",
@@ -34,7 +34,7 @@ bot.helpers.SendFile(
 *Асинхронный запрос:* 
 
 ```python
-await bot.helpers.SendFileAsync(
+await bot.helpers.send_file_async(
     user_id=987654321,
     text="Посмотри на эту статью: https://example.com/article",
     file_source="https://example.com/image.png",

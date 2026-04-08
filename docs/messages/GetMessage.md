@@ -17,7 +17,7 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.messages.GetMessage(
+response = bot.messages.get_message(
     message_id="mid:987654321"
 )
 ```
@@ -25,7 +25,7 @@ response = bot.messages.GetMessage(
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.GetMessageAsync(
+response = await bot.messages.get_message_async(
     message_id="mid:987654321"
 )
 ```

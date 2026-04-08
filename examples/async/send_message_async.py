@@ -1,20 +1,20 @@
 import asyncio
-from maxbot_api_client_python.api import API, Config
+from maxbot_api_client_python import API, Config
+from maxbot_api_client_python.types.models import SendMessageReq
 
 async def main():
-    target_user_id = 123456789 # recipient user ID
-
     try:
         async with API(Config(
             base_url="https://platform-api.max.ru",
             token="YOUR_BOT_TOKEN"
         )) as bot:
 
-            await bot.messages.SendMessageAsync(
-                user_id=target_user_id,
+            req = SendMessageReq(
+                user_id=123456789,    # recipient user ID
                 text="Hello world!"
             )
-            print("SendMessageAsync success!")
+            await bot.messages.send_message_async(req)
+            print("send_message_async success!")
             
     except Exception as e:
         print(f"Error: {e}")

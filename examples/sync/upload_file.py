@@ -1,10 +1,9 @@
-from maxbot_api_client_python.api import API, Config
+from maxbot_api_client_python import API, Config
 from maxbot_api_client_python.types.constants import UploadType
+from maxbot_api_client_python.types.models import UploadFileReq, SendMessageReq
 from maxbot_api_client_python.utils import attach_image
 
 def main():
-    target_user_id = 123456789  # recipient user ID
-
     try:
         with API(Config(
             base_url="https://platform-api.max.ru",
@@ -13,16 +12,18 @@ def main():
             timeout=30
         )) as bot:
 
-            file_info = bot.uploads.UploadFile(
-                type=UploadType.image,
+            upload_req = UploadFileReq(
+                type=UploadType.IMAGE,
                 file_path="examples/assets/file.jpg"
             )
+            file_info = bot.uploads.upload_file(upload_req)
             
             if file_info and file_info.token:
-                bot.messages.SendMessage(
-                    user_id=target_user_id,
+                msg_req = SendMessageReq(
+                    user_id=123456789,    # recipient user ID
                     attachments=[attach_image(token=file_info.token)]
                 )
+                bot.messages.send_message(msg_req)
                 print("File successfully sent to chat!")
 
     except Exception as e:

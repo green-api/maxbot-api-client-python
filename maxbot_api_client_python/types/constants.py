@@ -87,7 +87,7 @@ class SenderAction(str, Enum):
 
 class ChatAdminPermission(str, Enum):
     READ_ALL_MESSAGES = "read_all_messages"
-    ADD_REMOVE_USERS = "add_remove_members"
+    ADD_REMOVE_MEMBERS = "add_remove_members"
     ADD_ADMINS = "add_admins"
     CHANGE_CHAT_PHOTO = "change_chat_info"
     PIN_MESSAGE = "pin_message"

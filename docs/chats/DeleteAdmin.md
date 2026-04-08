@@ -18,7 +18,7 @@
 *Синхронный запрос:* 
 
 ```python
-bot.chats.DeleteAdmin(
+bot.chats.delete_admin(
     chat_id=123456789,
     user_id=55555
 )
@@ -27,7 +27,7 @@ bot.chats.DeleteAdmin(
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.DeleteAdminAsync(
+await bot.chats.delete_admin_async(
     chat_id=123456789,
     user_id=55555
 )

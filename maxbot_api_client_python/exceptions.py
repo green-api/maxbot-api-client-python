@@ -30,7 +30,7 @@ def get_exception_for_status(status_code: int) -> type[MaxBotError]:
     return _ERROR_MAP.get(status_code, MaxBotError)
 
 def build_api_error(response: httpx.Response) -> MaxBotError:
-    body_str = response.text 
+    body_str = response.content[:1000].decode('utf-8', errors='replace') 
     ExceptionClass = get_exception_for_status(response.status_code)
     
     return ExceptionClass(status_code=response.status_code, response=body_str)
