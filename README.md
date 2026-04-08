@@ -140,8 +140,6 @@ async with API(cfg) as bot:
 * Ссылка на синхронный пример: [upload_file.py](./examples/sync/upload_file.py)
 
 ```python
-from maxbot_api_client_python.types.constants import UploadType
-
 with API(cfg) as bot:
     response = bot.uploads.upload_file(UploadFileReq(
         type=UploadType.image,
@@ -152,8 +150,6 @@ with API(cfg) as bot:
 * Ссылка на асинхронный пример: [upload_file_async.py](./examples/async/upload_file_async.py)
 
 ```python
-from maxbot_api_client_python.types.constants import UploadType
-
 async with API(cfg) as bot:
     response = await bot.uploads.upload_file_async(UploadFileReq(
         type=UploadType.image,
