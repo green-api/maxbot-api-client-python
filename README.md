@@ -189,7 +189,7 @@ async with API(cfg) as bot:
 
 | Описание                                       | Ссылка на пример                                             |
 | ---------------------------------------------- | ------------------------------------------------------------ |
-| Как отправить сообщение                        | [SendMessage.py](./examples/sync/SendMessage.py)             |
+| Как отправить сообщение                        | [SendMessage.py](./examples/sync/send_message.py)             |
 | Как отправить сообщение *асинхронно*           | [get_messages_async.py](./examples/async/get_messages_async.py)  |
 | Как получить информацию о боте                 | [get_bot.py](./examples/sync/get_bot.py)                       |
 | Как получить информацию о боте *асинхронно*    | [get_bot_async.py](./examples/async/get_bot_async.py)            |
@@ -197,8 +197,8 @@ async with API(cfg) as bot:
 | Как загрузить файл *асинхронно*                | [upload_file_async.py](./examples/async/upload_file_async.py)    |
 | Как отправить файл                             | [send_file.py](./examples/sync/send_file.py)                   |
 | Как отправить файл *асинхронно*                | [send_file_async.py](./examples/async/send_file_async.py)        |
-| Как получить входящее уведомление              | [GetUpdates.py](./examples/sync/GetUpdates.py)               |
-| Как получить входящее уведомление *асинхронно* | [GetUpdatesAsync.py](./examples/async/GetUpdatesAsync.py)    |
+| Как получить входящее уведомление              | [GetUpdates.py](./examples/sync/get_updates.py)               |
+| Как получить входящее уведомление *асинхронно* | [GetUpdatesAsync.py](./examples/async/get_updates_async.py)    |
 
 ## Список всех методов библиотеки
 
