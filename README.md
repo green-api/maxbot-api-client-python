@@ -121,7 +121,7 @@ with API(cfg) as bot:
     response = bot.helpers.send_file(
         chat_id=1234567890,
         text="Check this!",
-        file_source="[https://http.cat/200.jpg](https://http.cat/200.jpg)"
+        file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
     )
 ```
 * Ссылка на асинхронный пример: [send_file_async.py](./examples/async/send_file_async.py)
@@ -131,7 +131,7 @@ async with API(cfg) as bot:
     response = await bot.helpers.send_file_async(
         chat_id=1234567890,
         text="Посмотри на этот файл!",
-        file_source="[https://http.cat/200.jpg](https://http.cat/200.jpg)"
+        file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
     )
 ```
 
