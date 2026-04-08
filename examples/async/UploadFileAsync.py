@@ -1,6 +1,7 @@
 import asyncio
 from maxbot_api_client_python import API, Config
 from maxbot_api_client_python.types.constants import UploadType
+from maxbot_api_client_python.types.models import UploadFileReq, SendMessageReq
 from maxbot_api_client_python.utils import attach_image
 
 async def main():
@@ -10,16 +11,18 @@ async def main():
             token="YOUR_BOT_TOKEN"
         )) as bot:
 
-            response = await bot.uploads.upload_file_async(
+            upload_req = UploadFileReq(
                 type=UploadType.IMAGE,
                 file_path="examples/assets/file.jpg"
             )
+            response = await bot.uploads.upload_file_async(upload_req)
             
             if response and response.token:
-                await bot.messages.send_message_async(
+                msg_req = SendMessageReq(
                     user_id=123456789,    # recipient user ID
                     attachments=[attach_image(token=response.token)]
                 )
+                await bot.messages.send_message_async(msg_req)
                 print("File successfully sent to chat!")
 
     except Exception as e:

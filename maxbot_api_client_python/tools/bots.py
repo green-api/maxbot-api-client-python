@@ -17,18 +17,17 @@ class Bots:
         """
         return self.client.decode("GET", Paths.ME, BotInfo)
 
-    def patch_bot(self, **kwargs: Any) -> BotInfo:
+    def patch_bot(self, req: BotPatch) -> BotInfo:
         """
         Edits current bot info.
         Fill only the fields you want to update - all remaining fields will stay untouched.
 
         Example:
-            response = bot.bots.patch_bot(
+            response = bot.bots.patch_bot(BotPatch(
                 name="New Name",
                 description="New description"
-            )
+            ))
         """
-        req = BotPatch(**kwargs)
         query, payload = self.client.split_request(req)
         return self.client.decode("PATCH", Paths.ME, BotInfo, query=query, payload=payload)
     
@@ -41,16 +40,15 @@ class Bots:
         """
         return await self.client.adecode("GET", Paths.ME, BotInfo)
     
-    async def patch_bot_async(self, **kwargs: Any) -> BotInfo:
+    async def patch_bot_async(self, req: BotPatch) -> BotInfo:
         """
         Async version of patch_bot.
 
         Example:
-            response = await bot.bots.patch_bot_async(
+            response = await bot.bots.patch_bot_async(BotPatch(
                 name="New Name",
                 description="New description"
-            )
+            ))
         """
-        req = BotPatch(**kwargs)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("PATCH", Paths.ME, BotInfo, query=query, payload=payload)

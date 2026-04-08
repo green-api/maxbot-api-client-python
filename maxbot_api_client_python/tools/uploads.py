@@ -19,19 +19,17 @@ class Uploads:
         wait=wait_exponential(multiplier=1, min=2, max=10),
         reraise=True,
     )
-
-    def upload_file(self, **kwargs: Any) -> UploadedInfo:
+    def upload_file(self, req: UploadFileReq) -> UploadedInfo:
         """
         Uploads a file to the server and returns the upload metadata.
         It seamlessly handles both STEP 1 (obtaining the URL) and STEP 2 (streaming the file).
 
         Example:
-            response = bot.uploads.upload_file(
+            response = bot.uploads.upload_file(UploadFileReq(
                 type=UploadType.IMAGE,
                 file_path="/path/to/image.png"
-            )
+            ))
         """
-        req = UploadFileReq(**kwargs)
         init_resp = self.get_upload_url(req.type)
         
         if init_resp.url:
@@ -71,17 +69,16 @@ class Uploads:
             logger.error(f"Failed to read file for upload: {e}")
             return None
 
-    async def upload_file_async(self, **kwargs: Any) -> UploadedInfo:
+    async def upload_file_async(self, req: UploadFileReq) -> UploadedInfo:
         """
         Async version of upload_file.
 
         Example:
-            response = await bot.uploads.upload_file_async(
+            response = await bot.uploads.upload_file_async(UploadFileReq(
                 type=UploadType.IMAGE,
                 file_path="/path/to/image.png"
-            )
+            ))
         """
-        req = UploadFileReq(**kwargs)
         async for attempt in AsyncRetrying(
             stop=stop_after_attempt(3), 
             wait=wait_exponential(multiplier=1, min=2, max=10),

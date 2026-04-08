@@ -17,27 +17,26 @@ class Helpers:
         self.client = client
         self.uploads = Uploads(client)
 
-    def send_file(self, **kwargs: Any) -> Optional[Message]:
+    def send_file(self, req: SendFileReq) -> Optional[Message]:
         """
         A helper that simplifies sending files to a chat.
         It automatically determines whether the provided file_source is a direct URL or a local file path.
 
         Example:
             # Sending a file via URL:
-            response = bot.helpers.send_file(
+            response = bot.helpers.send_file(SendFileReq(
                 chat_id=123456789,
                 text="Check out this image!",
                 file_source="https://example.com/image.png"
-            )
+            ))
 
             # Sending a local file:
-            response = bot.helpers.send_file(
+            response = bot.helpers.send_file(SendFileReq(
                 chat_id=123456789,
                 text="Here is the report.",
                 file_source="/local/path/to/report.pdf"
-            )
+            ))
         """
-        req = SendFileReq(**kwargs)
         is_url = urlparse(req.file_source).scheme in ("http", "https")
         if not is_url and not os.path.exists(req.file_source):
             raise ValueError("Invalid file path or URL.")
@@ -75,7 +74,7 @@ class Helpers:
         upload_type = self._determine_upload_type(ext)
 
         upload_req = UploadFileReq(type=upload_type, file_path=req.file_source)
-        upload_resp = self.uploads.upload_file(**upload_req.model_dump(exclude_none=True))
+        upload_resp = self.uploads.upload_file(upload_req)
 
         if not upload_resp or not upload_resp.token:
             logger.error("Upload failed: No token returned.")
@@ -116,19 +115,18 @@ class Helpers:
             raise last_err
         raise Exception("Unknown error in sendFileInternal")
 
-    async def send_file_async(self, **kwargs: Any) -> Optional[Message]:
+    async def send_file_async(self, req: SendFileReq) -> Optional[Message]:
         """
         Async version of send_file.
 
         Example:
         # Sending a local file asynchronously:
-        response = await bot.helpers.send_file_async(
+        response = await bot.helpers.send_file_async(SendFileReq(
             chat_id=123456789,
             text="Here is the report.",
             file_source="/local/path/to/report.pdf"
-        )
+        ))
         """
-        req = SendFileReq(**kwargs)
         if urlparse(req.file_source).scheme in ("http", "https"):
             return await self._send_file_by_url_async(req)
             
@@ -162,7 +160,7 @@ class Helpers:
         u_type = self._determine_upload_type(ext)
 
         upload_req = UploadFileReq(type=u_type, file_path=req.file_source)
-        upload_resp = await self.uploads.upload_file_async(**upload_req.model_dump(exclude_none=True))
+        upload_resp = await self.uploads.upload_file_async(upload_req)
 
         if not upload_resp or not upload_resp.token:
             return None
@@ -229,8 +227,7 @@ class Helpers:
     def _download_temp_file(self, url_str: str) -> str:
         headers = {"User-Agent": "maxbot-client/1.0"}
         with httpx.Client(follow_redirects=True, max_redirects=3) as client:
-            
-            with client.stream("GET", url_str, headers=headers, follow_redirects=True) as resp:
+            with client.stream("GET", url_str, headers=headers) as resp:
                 resp.raise_for_status() 
 
                 content_disp = resp.headers.get("Content-Disposition", "")

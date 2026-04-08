@@ -1,5 +1,6 @@
 import asyncio
 from maxbot_api_client_python import API, Config
+from maxbot_api_client_python.types.models import SendFileReq
 
 async def main():
     try:
@@ -8,11 +9,12 @@ async def main():
             token="YOUR_BOT_TOKEN"
         )) as bot:
 
-            response = await bot.helpers.send_file_async(
+            req = SendFileReq(
                 user_id=123456789,    # recipient user ID
                 text="Check this!",
                 file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
             )
+            response = await bot.helpers.send_file_async(req)
             
             if response:
                 print("send_file_async success!")

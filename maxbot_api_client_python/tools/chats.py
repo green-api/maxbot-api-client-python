@@ -2,478 +2,452 @@ from typing import Any
 
 from maxbot_api_client_python.client import Client
 from maxbot_api_client_python.types.constants import Paths
-from maxbot_api_client_python.types.models import AddMembersReq, AddMembersResp, ChatInfo, ChatMember, DeleteAdminReq, DeleteChatReq, DeleteMemberReq, EditChatReq, GetChatAdminsReq, GetChatAdminsResp, GetChatMembersReq, GetChatMembersResp, GetChatMembershipReq, GetChatReq, GetChatsReq, GetChatsResp, GetMessagesReq, GetPinnedMessageReq, LeaveChatReq, Message, PinMessageReq, SendActionReq, SetChatAdminsReq, SimpleQueryResult, UnpinMessageReq
+from maxbot_api_client_python.types.models import (
+    AddMembersReq, AddMembersResp, ChatInfo, ChatMember, DeleteAdminReq, DeleteChatReq, 
+    DeleteMemberReq, EditChatReq, GetChatAdminsReq, GetChatAdminsResp, GetChatMembersReq, 
+    GetChatMembersResp, GetChatMembershipReq, GetChatReq, GetChatsReq, GetChatsResp, 
+    GetPinnedMessageReq, LeaveChatReq, Message, PinMessageReq, SendActionReq, 
+    SetChatAdminsReq, SimpleQueryResult, UnpinMessageReq, ChatAdmin
+)
 
 class Chats:
     def __init__(self, client: Client):
         self.client = client
 
-    def get_chats(self, **kwargs: Any) -> GetChatsResp:
+    def get_chats(self, req: GetChatsReq) -> GetChatsResp:
         """
         Returns information about chats that the bot participated in: a result list and a marker pointing to the next page.
 
         Example:
-            response = bot.chats.get_chats(
+            response = bot.chats.get_chats(GetChatsReq(
                 count=20
-            )
+            ))
         """
-        req = GetChatsReq(**kwargs)
         query, payload = self.client.split_request(req)
         return self.client.decode("GET", Paths.CHATS, GetChatsResp, query=query, payload=payload)
 
-    def get_chat(self, **kwargs: Any) -> ChatInfo:
+    def get_chat(self, req: GetChatReq) -> ChatInfo:
         """
         Returns info about a specific chat.
 
         Example:
-            response = bot.chats.get_chat(
+            response = bot.chats.get_chat(GetChatReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetChatReq(**kwargs)
         path = Paths.CHATS_ID.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("GET", path, ChatInfo, query=query, payload=payload)
 
-    def edit_chat(self, **kwargs: Any) -> ChatInfo:
+    def edit_chat(self, req: EditChatReq) -> ChatInfo:
         """
         Modifies the properties of a chat, such as its title, icon, or notification settings.
 
         Example:
-            response = bot.chats.edit_chat(
+            response = bot.chats.edit_chat(EditChatReq(
                 chat_id=123456789,
                 title="Updated Chat Title",
                 notify=True
-            )
+            ))
         """
-        req = EditChatReq(**kwargs)
         path = Paths.CHATS_ID.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("PATCH", path, ChatInfo, query=query, payload=payload)
 
-    def delete_chat(self, **kwargs: Any) -> SimpleQueryResult:
+    def delete_chat(self, req: DeleteChatReq) -> SimpleQueryResult:
         """
         Permanently deletes a chat for the bot.
 
         Example:
-            response = bot.chats.delete_chat(
+            response = bot.chats.delete_chat(DeleteChatReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = DeleteChatReq(**kwargs)
         path = Paths.CHATS_ID.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    def send_action(self, **kwargs: Any) -> SimpleQueryResult:
+    def send_action(self, req: SendActionReq) -> SimpleQueryResult:
         """
         Broadcasts a temporary status action (e.g., "typing...", "recording video...") to the chat participants.
 
         Example:
-            response = bot.chats.send_action(
+            response = bot.chats.send_action(SendActionReq(
                 chat_id=123456789,
                 action="mark_seen"
-            )
+            ))
         """
-        req = SendActionReq(**kwargs)
         path = Paths.CHATS_ACTIONS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("POST", path, SimpleQueryResult, query=query, payload=payload)
 
-    def get_pinned_message(self, **kwargs: Any) -> Message:
+    def get_pinned_message(self, req: GetPinnedMessageReq) -> Message:
         """
         Retrieves the currently pinned message in the specified chat.
 
         Example:
-            response = bot.chats.get_pinned_message(
+            response = bot.chats.get_pinned_message(GetPinnedMessageReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetPinnedMessageReq(**kwargs)
         path = Paths.CHATS_PIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("GET", path, Message, query=query, payload=payload)
 
-    def pin_message(self, **kwargs: Any) -> SimpleQueryResult:
+    def pin_message(self, req: PinMessageReq) -> SimpleQueryResult:
         """
         Pins a specific message in the chat.
         You can optionally specify whether to notify chat members about the new pinned message.
 
         Example:
-            response = bot.chats.pin_message(
+            response = bot.chats.pin_message(PinMessageReq(
                 chat_id=123456789,
                 message_id="mid:987654321...",
                 notify=True
-            )
+            ))
         """
-        req = PinMessageReq(**kwargs)
         path = Paths.CHATS_PIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("PUT", path, SimpleQueryResult, query=query, payload=payload)
 
-    def unpin_message(self, **kwargs: Any) -> SimpleQueryResult:
+    def unpin_message(self, req: UnpinMessageReq) -> SimpleQueryResult:
         """
         Removes the pinned message from the specified chat.
 
         Example:
-            response = bot.chats.unpin_message(
+            response = bot.chats.unpin_message(UnpinMessageReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = UnpinMessageReq(**kwargs)
         path = Paths.CHATS_PIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    def get_chat_membership(self, **kwargs: Any) -> ChatMember:
+    def get_chat_membership(self, req: GetChatMembershipReq) -> ChatMember:
         """
         Returns chat membership info for the current bot.
 
         Example:
-            response = bot.chats.get_chat_membership(
+            response = bot.chats.get_chat_membership(GetChatMembershipReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetChatMembershipReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("GET", path, ChatMember, query=query, payload=payload)
 
-    def leave_chat(self, **kwargs: Any) -> SimpleQueryResult:
+    def leave_chat(self, req: LeaveChatReq) -> SimpleQueryResult:
         """
         Removes the bot from chat members.
 
         Example:
-            response = bot.chats.leave_chat(
+            response = bot.chats.leave_chat(LeaveChatReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = LeaveChatReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    def get_chat_admins(self, **kwargs: Any) -> GetChatAdminsResp:
+    def get_chat_admins(self, req: GetChatAdminsReq) -> GetChatAdminsResp:
         """
         Retrieves a list of administrators for the specified group chat.
 
         Example:
-            response = bot.chats.get_chat_admins(
+            response = bot.chats.get_chat_admins(GetChatAdminsReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetChatAdminsReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("GET", path, GetChatAdminsResp, query=query, payload=payload)
 
-    def set_chat_admins(self, **kwargs: Any) -> SimpleQueryResult:
+    def set_chat_admins(self, req: SetChatAdminsReq) -> SimpleQueryResult:
         """
         Assigns administrator rights to specific users in a group chat.
 
         Example:
-            response = bot.chats.set_chat_admins(
+            response = bot.chats.set_chat_admins(SetChatAdminsReq(
                 chat_id=123456789,
                 admins=[
                     ChatAdmin(user_id=98765, role="admin"),
                     ChatAdmin(user_id=43210, role="admin")
                 ]
-            )
+            ))
         """
-        req = SetChatAdminsReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("POST", path, SimpleQueryResult, query=query, payload=payload)
 
-    def delete_admin(self, **kwargs: Any) -> SimpleQueryResult:
+    def delete_admin(self, req: DeleteAdminReq) -> SimpleQueryResult:
         """
         Revokes administrator rights from a specific user in a group chat.
 
         Example:
-            response = bot.chats.delete_admin(
+            response = bot.chats.delete_admin(DeleteAdminReq(
                 chat_id=123456789,
                 user_id=98765
-            )
+            ))
         """
-        req = DeleteAdminReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ADMIN_ID.format(req.chat_id, req.user_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    def get_chat_members(self, **kwargs: Any) -> GetChatMembersResp:
+    def get_chat_members(self, req: GetChatMembersReq) -> GetChatMembersResp:
         """
         Returns users participated in the chat.
 
         Example:
-            response = bot.chats.get_chat_members(
+            response = bot.chats.get_chat_members(GetChatMembersReq(
                 chat_id=123456789,
                 count=20
-            )
+            ))
         """
-        req = GetChatMembersReq(**kwargs)
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("GET", path, GetChatMembersResp, query=query, payload=payload)
 
-    def add_members(self, **kwargs: Any) -> AddMembersResp:
+    def add_members(self, req: AddMembersReq) -> AddMembersResp:
         """
         Adds one or more users to a group chat.
 
         Example:
-            response = bot.chats.add_members(
+            response = bot.chats.add_members(AddMembersReq(
                 chat_id=123456789,
                 user_ids=[11111, 22222]
-            )
+            ))
         """
-        req = AddMembersReq(**kwargs)
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("POST", path, AddMembersResp, query=query, payload=payload)
 
-    def delete_member(self, **kwargs: Any) -> SimpleQueryResult:
+    def delete_member(self, req: DeleteMemberReq) -> SimpleQueryResult:
         """
         Removes a specific user from a group chat.
         You can optionally block the user from rejoining.
 
         Example:
-            response = bot.chats.delete_member(
+            response = bot.chats.delete_member(DeleteMemberReq(
                 chat_id=123456789,
                 user_id=98765,
                 block=True
-            )
+            ))
         """
-        req = DeleteMemberReq(**kwargs)
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return self.client.decode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def get_chats_async(self, **kwargs: Any) -> GetChatsResp:
+    async def get_chats_async(self, req: GetChatsReq) -> GetChatsResp:
         """
         Async version of get_chats.
 
         Example:
-            response = await bot.chats.get_chats_async(
+            response = await bot.chats.get_chats_async(GetChatsReq(
                 count=20
-            )
+            ))
         """
-        req = GetChatsReq(**kwargs)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("GET", Paths.CHATS, GetChatsResp, query=query, payload=payload)
 
-    async def get_chat_async(self, **kwargs: Any) -> ChatInfo:
+    async def get_chat_async(self, req: GetChatReq) -> ChatInfo:
         """
         Async version of get_chat.
 
         Example:
-            response = await bot.chats.get_chat_async(
+            response = await bot.chats.get_chat_async(GetChatReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetChatReq(**kwargs)
         path = Paths.CHATS_ID.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("GET", path, ChatInfo, query=query, payload=payload)
     
-    async def edit_chat_async(self, **kwargs: Any) -> ChatInfo:
+    async def edit_chat_async(self, req: EditChatReq) -> ChatInfo:
         """
         Async version of EditChat.
 
         Example:
-            response = await bot.chats.edit_chat_async(
+            response = await bot.chats.edit_chat_async(EditChatReq(
                 chat_id=123456789,
                 title="Updated Chat Title"
-            )
+            ))
         """
-        req = EditChatReq(**kwargs)
         path = Paths.CHATS_ID.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("PATCH", path, ChatInfo, query=query, payload=payload)
 
-    async def delete_chat_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def delete_chat_async(self, req: DeleteChatReq) -> SimpleQueryResult:
         """
         Async version of DeleteChat.
 
         Example:
-            response = await bot.chats.delete_chat_async(
+            response = await bot.chats.delete_chat_async(DeleteChatReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = DeleteChatReq(**kwargs)
         path = Paths.CHATS_ID.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def send_action_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def send_action_async(self, req: SendActionReq) -> SimpleQueryResult:
         """
         Async version of SendAction.
 
         Example:
-            response = await bot.chats.send_action_async(
+            response = await bot.chats.send_action_async(SendActionReq(
                 chat_id=123456789,
                 action="typing"
-            )
+            ))
         """
-        req = SendActionReq(**kwargs)
         path = Paths.CHATS_ACTIONS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("POST", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def get_pinned_message_async(self, **kwargs: Any) -> Message:
+    async def get_pinned_message_async(self, req: GetPinnedMessageReq) -> Message:
         """
         Async version of GetPinnedMessage.
 
         Example:
-            response = await bot.chats.get_pinned_message_async(
+            response = await bot.chats.get_pinned_message_async(GetPinnedMessageReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetPinnedMessageReq(**kwargs)
         path = Paths.CHATS_PIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("GET", path, Message, query=query, payload=payload)
 
-    async def pin_message_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def pin_message_async(self, req: PinMessageReq) -> SimpleQueryResult:
         """
         Async version of PinMessage.
 
         Example:
-            response = await bot.chats.pin_message_async(
+            response = await bot.chats.pin_message_async(PinMessageReq(
                 chat_id=123456789,
                 message_id="mid:987654321..."
-            )
+            ))
         """
-        req = PinMessageReq(**kwargs)
         path = Paths.CHATS_PIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("PUT", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def unpin_message_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def unpin_message_async(self, req: UnpinMessageReq) -> SimpleQueryResult:
         """
         Async version of UnpinMessage.
 
         Example:
-            response = await bot.chats.unpin_message_async(
+            response = await bot.chats.unpin_message_async(UnpinMessageReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = UnpinMessageReq(**kwargs)
         path = Paths.CHATS_PIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def get_chat_membership_async(self, **kwargs: Any) -> ChatMember:
+    async def get_chat_membership_async(self, req: GetChatMembershipReq) -> ChatMember:
         """
         Async version of GetChatMembership.
 
         Example:
-            response = await bot.chats.get_chat_membership_async(
+            response = await bot.chats.get_chat_membership_async(GetChatMembershipReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetChatMembershipReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("GET", path, ChatMember, query=query, payload=payload)
 
-    async def leave_chat_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def leave_chat_async(self, req: LeaveChatReq) -> SimpleQueryResult:
         """
         Async version of LeaveChat.
 
         Example:
-            response = await bot.chats.leave_chat_async(
+            response = await bot.chats.leave_chat_async(LeaveChatReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = LeaveChatReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ME.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def get_chat_admins_async(self, **kwargs: Any) -> GetChatAdminsResp:
+    async def get_chat_admins_async(self, req: GetChatAdminsReq) -> GetChatAdminsResp:
         """
         Async version of get_chatAdmins.
 
         Example:
-            response = await bot.chats.get_chat_admins_async(
+            response = await bot.chats.get_chat_admins_async(GetChatAdminsReq(
                 chat_id=123456789
-            )
+            ))
         """
-        req = GetChatAdminsReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("GET", path, GetChatAdminsResp, query=query, payload=payload)
 
-    async def set_chat_admins_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def set_chat_admins_async(self, req: SetChatAdminsReq) -> SimpleQueryResult:
         """
         Async version of SetChatAdmins.
 
         Example:
-            response = await bot.chats.set_chat_admins_async(
+            response = await bot.chats.set_chat_admins_async(SetChatAdminsReq(
                 chat_id=123456789,
-                admins=[ChatAdmin(user_id=98765, role="admin")]
-            )
+                admins=[ChatAdmin(user_id=98765, permissions=["admin"])]
+            ))
         """
-        req = SetChatAdminsReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ADMIN.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("POST", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def delete_admin_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def delete_admin_async(self, req: DeleteAdminReq) -> SimpleQueryResult:
         """
         Async version of DeleteAdmin.
 
         Example:
-            response = await bot.chats.delete_admin_async(
+            response = await bot.chats.delete_admin_async(DeleteAdminReq(
                 chat_id=123456789,
                 user_id=98765
-            )
+            ))
         """
-        req = DeleteAdminReq(**kwargs)
         path = Paths.CHATS_MEMBERS_ADMIN_ID.format(req.chat_id, req.user_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("DELETE", path, SimpleQueryResult, query=query, payload=payload)
 
-    async def get_chat_members_async(self, **kwargs: Any) -> GetChatMembersResp:
+    async def get_chat_members_async(self, req: GetChatMembersReq) -> GetChatMembersResp:
         """
         Async version of GetChatMembers.
 
         Example:
-            response = await bot.chats.get_chat_members_async(
+            response = await bot.chats.get_chat_members_async(GetChatMembersReq(
                 chat_id=123456789,
                 count=20
-            )
+            ))
         """
-        req = GetChatMembersReq(**kwargs)
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("GET", path, GetChatMembersResp, query=query, payload=payload)
 
-    async def add_members_async(self, **kwargs: Any) -> AddMembersResp:
+    async def add_members_async(self, req: AddMembersReq) -> AddMembersResp:
         """
         Async version of AddMembers.
 
         Example:
-            response = await bot.chats.add_members_async(
+            response = await bot.chats.add_members_async(AddMembersReq(
                 chat_id=123456789,
                 user_ids=[11111, 22222]
-            )
+            ))
         """
-        req = AddMembersReq(**kwargs)
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("POST", path, AddMembersResp, query=query, payload=payload)
 
-    async def delete_member_async(self, **kwargs: Any) -> SimpleQueryResult:
+    async def delete_member_async(self, req: DeleteMemberReq) -> SimpleQueryResult:
         """
         Async version of DeleteMember.
 
         Example:
-            response = await bot.chats.delete_member_async(
+            response = await bot.chats.delete_member_async(DeleteMemberReq(
                 chat_id=123456789,
                 user_id=98765
-            )
+            ))
         """
-        req = DeleteMemberReq(**kwargs)
         path = Paths.CHATS_MEMBERS.format(req.chat_id)
         query, payload = self.client.split_request(req)
         return await self.client.adecode("DELETE", path, SimpleQueryResult, query=query, payload=payload)

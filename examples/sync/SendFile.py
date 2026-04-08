@@ -1,4 +1,5 @@
 from maxbot_api_client_python import API, Config
+from maxbot_api_client_python.types.models import SendFileReq
 
 def main():
     try:
@@ -9,11 +10,12 @@ def main():
             timeout=30
         )) as bot:
 
-            response = bot.helpers.send_file(
+            req = SendFileReq(
                 user_id=123456789,    # recipient user ID
                 text="Check this!",
                 file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
             )
+            response = bot.helpers.send_file(req)
             
             if response:
                 print("send_file success!")
