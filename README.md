@@ -96,20 +96,20 @@ async with API(cfg) as bot:
 
 ```python
 with API(cfg) as bot:
-    response = bot.messages.get_messages(
+    response = bot.messages.send_message(SendMessageReq(
         user_id=1234567890,
         text="Hello world!"
-    )
+    ))
 ```
 
-* Ссылка на асинхронный пример: [get_messages_async.py](./examples/async/get_messages_async.py)
+* Ссылка на асинхронный пример: [send_message_async.py](./examples/async/send_message_async.py)
 
 ```python
 async with API(cfg) as bot:
-    response = await bot.messages.get_messages_async(
+    response = await bot.messages.send_message_async(SendMessageReq(
         user_id=1234567890,
         text="Hello world from Async!"
-    )
+    ))
 ```
 
 **Как легко отправить файл (по ссылке или локальный):**
@@ -118,21 +118,21 @@ async with API(cfg) as bot:
 
 ```python
 with API(cfg) as bot:
-    response = bot.helpers.send_file(
+    response = bot.helpers.send_file(SendFileReq(
         chat_id=1234567890,
         text="Check this!",
         file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
-    )
+    ))
 ```
 * Ссылка на асинхронный пример: [send_file_async.py](./examples/async/send_file_async.py)
 
 ```python
 async with API(cfg) as bot:
-    response = await bot.helpers.send_file_async(
+    response = await bot.helpers.send_file_async(SendFileReq(
         chat_id=1234567890,
         text="Посмотри на этот файл!",
         file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
-    )
+    ))
 ```
 
 **Как вручную загрузить файл (для кастомных вложений):**
@@ -143,10 +143,10 @@ async with API(cfg) as bot:
 from maxbot_api_client_python.types.constants import UploadType
 
 with API(cfg) as bot:
-    response = bot.uploads.upload_file(
+    response = bot.uploads.upload_file(UploadFileReq(
         type=UploadType.image,
         file_path="examples/assets/file.jpg"
-    )
+    ))
 ```
 
 * Ссылка на асинхронный пример: [upload_file_async.py](./examples/async/upload_file_async.py)
@@ -155,10 +155,10 @@ with API(cfg) as bot:
 from maxbot_api_client_python.types.constants import UploadType
 
 async with API(cfg) as bot:
-    response = await bot.uploads.upload_file_async(
+    response = await bot.uploads.upload_file_async(UploadFileReq(
         type=UploadType.image,
         file_path="examples/assets/file.jpg"
-    )
+    ))
 ```
 
 **Как получить входящее уведомление (Long Polling):**
@@ -167,20 +167,20 @@ async with API(cfg) as bot:
 
 ```python
 with API(cfg) as bot:
-    response = bot.subscriptions.get_updates(
+    response = bot.subscriptions.get_updates(GetUpdatesReq(
         marker=0,
         timeout=30
-    )
+    ))
 ```
 
 * Ссылка на асинхронный пример: [get_updates_async.py](./examples/async/get_updates_async.py)
 
 ```python
 async with API(cfg) as bot:
-    response = await bot.subscriptions.get_updates_async(
+    response = await bot.subscriptions.get_updates_async(GetUpdatesReq(
         marker=0,
         timeout=30
-    )
+    ))
 ```
 
 -----
