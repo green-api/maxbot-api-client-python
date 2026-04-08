@@ -111,4 +111,12 @@ class Uploads:
         return await self.client.adecode("POST", Paths.UPLOADS, PhotoAttachmentRequestPayload, query={"type": upload_type.value})
 
     async def upload_multipart_async(self, upload_url: str, file_path: str) -> Optional[UploadedInfo]:
-        return await asyncio.to_thread(self.upload_multipart, upload_url, file_path)
+        path = Path(file_path)
+        try:
+            with open(path, "rb") as f:
+                safe_name = path.name[:255]
+                files = {"file": (safe_name, f)}
+                return await self.client.adecode("POST", upload_url, UploadedInfo, files=files)
+        except OSError as e:
+            logger.error(f"Failed to read file for upload: {e}")
+            return None

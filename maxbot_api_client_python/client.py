@@ -74,7 +74,19 @@ class Client:
     async def get_async_client(self) -> httpx.AsyncClient:
         if self._async_client is None:
             self._async_client = httpx.AsyncClient(timeout=self.timeout)
+        if self._async_lock is None:
+            self._async_lock = asyncio.Lock()
         return self._async_client
+
+    async def _await_limit(self) -> None:
+        if self._limiter_interval <= 0:
+            return
+        
+        await self.get_async_client()
+        async with self._async_lock:
+            delay = self._get_delay()
+        if delay > 0:
+            await asyncio.sleep(delay)
 
     def close(self) -> None:
         self._sync_client.close()
@@ -98,7 +110,7 @@ class Client:
         if not hasattr(req, "model_fields"):
             return None, self._prepare_data(req)
             
-        data = req.model_dump(exclude_none=True, by_alias=True)
+        data = req.model_dump(exclude_unset=True, by_alias=True)
         query, payload = {}, {}
         
         for field_name, field in req.model_fields.items():
@@ -176,7 +188,13 @@ class Client:
     
     def _parse_response(self, data: bytes, model_class: Type[T]) -> T:
         if not data or data.strip() in (b"", b"<retval>1</retval>"):
-            return model_class.model_construct()
+            try:
+                return model_class.model_validate({})
+            except Exception as e:
+                logger.error(f"Cannot construct empty model {model_class.__name__} for empty response.")
+                failed_response = httpx.Response(status_code=500, content=data, request=httpx.Request("GET", self.base_url))
+                raise build_api_error(failed_response) from e
+                
         try:
             return model_class.model_validate_json(data)
         except Exception as e:

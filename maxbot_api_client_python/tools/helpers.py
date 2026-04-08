@@ -57,8 +57,8 @@ class Helpers:
         temp_path = None
         try:
             temp_path = self._download_temp_file(req.file_source)
-            req.file_source = temp_path
-            return self._send_file_by_upload(req)
+            req_copy = req.model_copy(update={"file_source": temp_path})
+            return self._send_file_by_upload(req_copy)
         except Exception as e:
             logger.error(f"File processing/upload error: {e}")
             raise
@@ -143,8 +143,8 @@ class Helpers:
         temp_path = None
         try:
             temp_path = await self._download_temp_file_async(req.file_source)
-            req.file_source = temp_path
-            return await self._send_file_by_upload_async(req)
+            req_copy = req.model_copy(update={"file_source": temp_path})
+            return await self._send_file_by_upload_async(req_copy)
         except Exception as e:
             logger.error(f"Async file processing/upload error: {e}")
             raise
