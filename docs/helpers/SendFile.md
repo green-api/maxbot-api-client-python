@@ -23,23 +23,25 @@
 *Синхронный запрос:*
 
 ```python
-bot.helpers.send_file(
+request = SendFileReq(
     chat_id=123456789,
     text="Вот отчет за этот месяц",
     file_source="./reports/march.pdf",
     notify=True
 )
+bot.helpers.send_file(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.helpers.send_file_async(
-    user_id=987654321,
-    text="Посмотри на эту статью: https://example.com/article",
-    file_source="https://example.com/image.png",
-    disable_link_preview=True
+request = SendFileReq(
+    chat_id=123456789,
+    text="Вот отчет за этот месяц",
+    file_source="./reports/march.pdf",
+    notify=True
 )
+await bot.helpers.send_file_async(request)
 ```
 
 ## Ответ {#response}

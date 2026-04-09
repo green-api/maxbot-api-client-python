@@ -24,21 +24,23 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.messages.get_messages(
+request = SendMessageReq(
     chat_id=123456,
     text="Hello, world!",
     notify=True
 )
+response = bot.messages.send_message(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.get_messages_async(
+request = SendMessageReq(
     chat_id=123456,
     text="Hello, world!",
     notify=True
 )
+response = await bot.messages.send_message_async(request)
 ```
 
 ## Ответ {#response}

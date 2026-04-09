@@ -10,12 +10,12 @@ def main():
             timeout=30
         )) as bot:
 
-            req = SendFileReq(
+            request = SendFileReq(
                 user_id=123456789,    # recipient user ID
                 text="Check this!",
                 file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
             )
-            response = bot.helpers.send_file(req)
+            response = bot.helpers.send_file(request)
             
             if response:
                 print("send_file success!")

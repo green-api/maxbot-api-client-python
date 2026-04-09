@@ -17,13 +17,19 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.get_chat_membership(chat_id=123456789)
+request = GetChatMembershipReq(
+    chat_id=123456789
+)
+response = bot.chats.get_chat_membership(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.get_chat_membership_async(chat_id=123456789)
+request = GetChatMembershipReq(
+    chat_id=123456789
+)
+response = await bot.chats.get_chat_membership_async(request)
 ```
 
 ## Ответ {#response}

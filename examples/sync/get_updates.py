@@ -10,8 +10,8 @@ def main():
             timeout=30
         )) as bot:
 
-            req = GetUpdatesReq()
-            response = bot.subscriptions.get_updates(req)
+            request = GetUpdatesReq()
+            response = bot.subscriptions.get_updates(request)
             print(f"New update received:\n{response.model_dump_json(indent=4)}")
             
     except Exception as e:

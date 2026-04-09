@@ -9,12 +9,12 @@ async def main():
             token="YOUR_BOT_TOKEN"
         )) as bot:
 
-            req = SendFileReq(
+            request = SendFileReq(
                 user_id=123456789,    # recipient user ID
                 text="Check this!",
                 file_source="https://storage.yandexcloud.net/sw-prod-03-test/ChatBot/corgi.jpg"
             )
-            response = await bot.helpers.send_file_async(req)
+            response = await bot.helpers.send_file_async(request)
             
             if response:
                 print("send_file_async success!")

@@ -17,13 +17,19 @@
 *Синхронный запрос:*
 
 ```python
-bot.chats.leave_chat(chat_id=123456789)
+request = LeaveChatReq(
+    chatID=123456789
+)
+bot.chats.leave_chat(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.leave_chat_async(chat_id=123456789)
+request = LeaveChatReq(
+    chatID=123456789
+)
+await bot.chats.leave_chat_async(request)
 ```
 
 ## Ответ {#response}

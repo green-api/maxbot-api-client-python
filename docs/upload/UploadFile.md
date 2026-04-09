@@ -23,19 +23,21 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.uploads.upload_file(
+request = UploadFileReq(
     type=UploadType.IMAGE,
     file_path="./photos/cat.png"
 )
+response = bot.uploads.upload_file(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.uploads.upload_file_async(
+request = UploadFileReq(
     type=UploadType.IMAGE,
     file_path="./photos/cat.png"
 )
+response = await bot.uploads.upload_file_async(request)
 ```
 
 ## Ответ {#response}

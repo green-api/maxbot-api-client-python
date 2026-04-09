@@ -18,19 +18,21 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.add_members(
+request = AddMembersReq(
     chat_id=123456789,
     user_ids=[77777, 88888]
 )
+response = bot.chats.add_members(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.add_members_async(
+request = AddMembersReq(
     chat_id=123456789,
     user_ids=[77777, 88888]
 )
+response = await bot.chats.add_members_async(request)
 ```
 
 ## Ответ {#response}

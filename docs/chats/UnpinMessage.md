@@ -17,13 +17,19 @@
 *Синхронный запрос:* 
 
 ```python
-bot.chats.unpin_message(chat_id=123456789)
+request = UnpinMessageReq(
+    chat_id=123456789
+)
+bot.chats.unpin_message(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.unpin_message_async(chat_id=123456789)
+request = UnpinMessageReq(
+    chat_id=123456789
+)
+await bot.chats.unpin_message_async(request)
 ```
 
 ## Ответ {#response}

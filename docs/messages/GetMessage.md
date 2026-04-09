@@ -17,17 +17,19 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.messages.get_message(
+request = GetMessageReq(
     message_id="mid:987654321"
 )
+response = bot.messages.get_message(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.get_message_async(
+request = GetMessageReq(
     message_id="mid:987654321"
 )
+response = await bot.messages.get_message_async(request)
 ```
 
 ## Ответ {#response}

@@ -17,13 +17,19 @@
 *Синхронный запрос:* 
 
 ```python
-bot.chats.delete_chat(chat_id=123456789)
+request = DeleteChatReq(
+    chat_id=123456789
+)
+bot.chats.delete_chat(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-await bot.chats.delete_chat_async(chat_id=123456789)
+request = DeleteChatReq(
+    chat_id=123456789
+)
+await bot.chats.delete_chat_async(request)
 ```
 
 ## Ответ {#response}

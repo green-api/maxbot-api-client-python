@@ -21,21 +21,23 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.edit_chat(
+request = EditChatReq(
     chat_id=123456789,
     title="Новое название группы",
     notify=False
 )
+response = bot.chats.edit_chat(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.edit_chat_async(
+request = EditChatReq(
     chat_id=123456789,
     title="Новое название группы",
     notify=False
 )
+response = await bot.chats.edit_chat_async(request)
 ```
 
 ## Ответ {#response}

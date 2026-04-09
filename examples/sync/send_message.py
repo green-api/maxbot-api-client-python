@@ -10,11 +10,11 @@ def main():
             timeout=30
         )) as bot:
             
-            req = SendMessageReq(
+            request = SendMessageReq(
                 user_id=123456789,    # recipient user ID
                 text="Hello world!"
             )
-            bot.messages.send_message(req)
+            bot.messages.send_message(request)
             print("send_message success!")
             
     except Exception as e:

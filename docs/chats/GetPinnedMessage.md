@@ -17,13 +17,19 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.chats.get_pinned_message(chatID=123456789)
+request = GetPinnedMessageReq(
+    chatID=123456789
+)
+response = bot.chats.get_pinned_message(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.get_pinned_message_async(chatID=123456789)
+request = GetPinnedMessageReq(
+    chatID=123456789
+)
+response = await bot.chats.get_pinned_message_async(request)
 ```
 
 ## Ответ {#response}

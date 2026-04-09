@@ -9,8 +9,8 @@ async def main():
             token="YOUR_BOT_TOKEN"
         )) as bot:
 
-            req = GetUpdatesReq()
-            response = await bot.subscriptions.get_updates_async(req)
+            request = GetUpdatesReq()
+            response = await bot.subscriptions.get_updates_async(request)
             print(f"New update received:\n{response.model_dump_json(indent=4)}")
             
     except Exception as e:

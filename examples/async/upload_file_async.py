@@ -11,18 +11,18 @@ async def main():
             token="YOUR_BOT_TOKEN"
         )) as bot:
 
-            upload_req = UploadFileReq(
+            upload_request = UploadFileReq(
                 type=UploadType.IMAGE,
                 file_path="examples/assets/file.jpg"
             )
-            response = await bot.uploads.upload_file_async(upload_req)
+            response = await bot.uploads.upload_file_async(upload_request)
             
             if response and response.token:
-                msg_req = SendMessageReq(
+                message_request = SendMessageReq(
                     user_id=123456789,    # recipient user ID
                     attachments=[attach_image(token=response.token)]
                 )
-                await bot.messages.send_message_async(msg_req)
+                await bot.messages.send_message_async(message_request)
                 print("File successfully sent to chat!")
 
     except Exception as e:

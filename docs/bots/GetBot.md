@@ -1,4 +1,4 @@
-# get_bot 
+# GetBot 
 
 [dev.max.ru/docs-api/methods/GET/me](https://dev.max.ru/docs-api/methods/GET/me)
 

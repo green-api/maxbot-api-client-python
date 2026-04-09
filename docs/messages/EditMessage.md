@@ -22,21 +22,23 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.messages.edit_message(
+request = EditMessageReq(
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     text="Updated message text!",
     notify=False
 )
+response = bot.messages.edit_message(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.edit_message_async(
+request = EditMessageReq(
     message_id="mid.000000000782a4e0019d00d3ef744e91",
     text="Updated message text!",
     notify=False
 )
+response = await bot.messages.edit_message_async(request)
 ```
 
 ## Ответ {#response}

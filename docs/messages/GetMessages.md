@@ -10,8 +10,8 @@
 
 | Поле         | Тип          | Обязательный | Описание                                                                                   |
 |--------------|--------------|--------------|--------------------------------------------------------------------------------------------|
-| `chat_id`    | **integer**  | **Да***      | Идентификатор чата <br>*(*обязательно, если не указан `MessageIDs`)*                       |
-| <nobr>`message_ids`</nobr>  | **array**    | **Да*** | Массив точных идентификаторов сообщений <br>*(*обязательно, если нет `chat_id`)* |
+| `chat_id`    | **integer**  | **Да***      | Идентификатор чата <br>**обязательно, если не указан `MessageIDs`*                         |
+| <nobr>`message_ids`</nobr>  | **array**    | **Да*** | Массив точных идентификаторов сообщений <br>**обязательно, если нет `chat_id`*   |
 | `from`       | **integer**  | Нет          | Время начала для запрашиваемых сообщений (в формате Unix timestamp)                        |
 | `to`         | **integer**  | Нет          | Время окончания для запрашиваемых сообщений (в формате Unix timestamp)                     |
 | `count`      | **integer**  | Нет          | Максимальное количество сообщений в ответе (по умолчанию 50)                               |
@@ -21,21 +21,23 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.messages.get_messages(
+request = GetMessagesReq(
     chat_id=123456
 )
+response = bot.messages.get_messages(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.get_messages_async(
-    message_ids=[
+request = GetMessagesReq(
+     message_ids=[
         "mid.000000000782a4e0019d002654056aed",
         "mid.000000000782a4e0019d0004e58330de",
         "mid.000000000782a4e0019d0004e3424fbd"
     ]
 )
+response = await bot.messages.get_messages_async(request)
 ```
 
 ## Ответ {#response}

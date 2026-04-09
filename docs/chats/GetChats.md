@@ -18,19 +18,21 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.chats.get_chats(
+request = GetChatsReq(
     count=50,
     marker=1679823456
 )
+response = bot.chats.get_chats(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.chats.get_chats_async(
+request = GetChatsReq(
     count=50,
     marker=1679823456
 )
+response = await bot.chats.get_chats_async(request)
 ```
 
 ## Ответ {#response}

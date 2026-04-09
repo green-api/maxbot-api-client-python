@@ -9,11 +9,11 @@ async def main():
             token="YOUR_BOT_TOKEN"
         )) as bot:
 
-            req = SendMessageReq(
+            request = SendMessageReq(
                 user_id=123456789,    # recipient user ID
                 text="Hello world!"
             )
-            await bot.messages.send_message_async(req)
+            await bot.messages.send_message_async(request)
             print("send_message_async success!")
             
     except Exception as e:

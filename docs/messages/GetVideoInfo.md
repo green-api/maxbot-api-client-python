@@ -17,17 +17,19 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.messages.get_video_info(
+request = GetVideoInfoReq(
     video_token="f9LHo9qcjkTKVMC1O8b_62OLxJsPk0_8edD0clywyQ2lv0GN5P0QBI5aikR"
 )
+response = bot.messages.get_video_info(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.get_video_info_async(
+request = GetVideoInfoReq(
     video_token="f9LHo9qcjkTKVMC1O8b_62OLxJsPk0_8edD0clywyQ2lv0GN5P0QBI5aikR"
 )
+response = await bot.messages.get_video_info_async(request)
 ```
 
 ## Ответ {#response}

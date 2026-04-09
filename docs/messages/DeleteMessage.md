@@ -17,17 +17,19 @@
 *Синхронный запрос:* 
 
 ```python
-response = bot.messages.delete_message(
+request = DeleteMessageReq(
     message_id="mid.000000000782a4e0019d00d3ef744e91"
 )
+response = bot.messages.delete_message(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.messages.delete_message_async(
+request = DeleteMessageReq(
     message_id="mid.000000000782a4e0019d00d3ef744e91"
 )
+response = await bot.messages.delete_message_async(request)
 ```
 
 ## Ответ {#response}

@@ -12,18 +12,18 @@ def main():
             timeout=30
         )) as bot:
 
-            upload_req = UploadFileReq(
+            upload_request = UploadFileReq(
                 type=UploadType.IMAGE,
                 file_path="examples/assets/file.jpg"
             )
-            file_info = bot.uploads.upload_file(upload_req)
+            file_info = bot.uploads.upload_file(upload_request)
             
             if file_info and file_info.token:
-                msg_req = SendMessageReq(
+                message_request = SendMessageReq(
                     user_id=123456789,    # recipient user ID
                     attachments=[attach_image(token=file_info.token)]
                 )
-                bot.messages.send_message(msg_req)
+                bot.messages.send_message(message_request)
                 print("File successfully sent to chat!")
 
     except Exception as e:

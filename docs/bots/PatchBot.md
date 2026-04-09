@@ -1,4 +1,4 @@
-# patch_bot 
+# PatchBot 
 
 Метод предназначен для изменения данных бота.
 
@@ -18,17 +18,19 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.bots.patch_bot(
+request = BotPatch(
     name="New name"
 )
+response = bot.bots.patch_bot(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.bots.patch_bot_async(
+request = BotPatch(
     name="New name"
 )
+response = await bot.bots.patch_bot_async(request)
 ```
 
 ## Ответ {#response}

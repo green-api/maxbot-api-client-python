@@ -19,17 +19,19 @@
 *Синхронный запрос:*
 
 ```python
-response = bot.subscriptions.unubscribe(
+request = UnsubscribeReq(
     url="https://webhook.site/my-bot-endpoint"
 )
+response = bot.subscriptions.unubscribe(request)
 ```
 
 *Асинхронный запрос:* 
 
 ```python
-response = await bot.subscriptions.unubscribe_async(
+request = UnsubscribeReq(
     url="https://webhook.site/my-bot-endpoint"
 )
+response = await bot.subscriptions.unubscribe_async(request)
 ```
 
 ## Ответ {#response}
