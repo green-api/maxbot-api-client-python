@@ -1,5 +1,4 @@
-import aiofiles, asyncio, httpx, logging, mimetypes, os, time, re
-from aiofiles import tempfile
+import aiofiles, asyncio, httpx, logging, mimetypes, os, tempfile, time, re
 from typing import Any, List, Optional
 from urllib.parse import urlparse
 from pathlib import Path
@@ -151,7 +150,7 @@ class Helpers:
         finally:
             if temp_path and os.path.exists(temp_path):
                 try:
-                    await aiofiles.os.remove(temp_path)
+                    os.remove(temp_path)
                 except OSError as e:
                     logger.error(f"Failed to cleanup temp file: {e}")
 
@@ -271,9 +270,8 @@ class Helpers:
                 else:
                     filename = url_path_name if "." in url_path_name else f"{url_path_name}{extension}"
 
-                temp_file = tempfile.NamedTemporaryFile(prefix="temp_", suffix=f"_{os.path.basename(filename)}", delete=False)
-                temp_path = temp_file.name
-                temp_file.close()
+                fd, temp_path = tempfile.mkstemp(prefix="temp_", suffix=f"_{os.path.basename(filename)}")
+                os.close(fd)
 
                 async with aiofiles.open(temp_path, "wb") as f:
                     async for chunk in resp.aiter_bytes(chunk_size=8192):
