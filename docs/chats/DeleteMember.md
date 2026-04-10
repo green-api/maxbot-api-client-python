@@ -1,0 +1,57 @@
+# DeleteMember
+
+[dev.max.ru/docs-api/methods/DELETE/chats/-chatId-/members](https://dev.max.ru/docs-api/methods/DELETE/chats/-chatId-/members)
+
+Удаляет участника из группового чата. Для этого могут потребоваться дополнительные права
+
+## Запрос {#request}
+
+### Поля запроса {#request-parameters}
+
+| Поле      | Тип         | Обязательный | Описание                                              |
+|-----------|-------------|--------------|-------------------------------------------------------|
+| `chat_id` | **integer** | Да           | ID чата                                               |
+| `user_id` | **integer** | Да           | ID удаляемого пользователя                            |
+| `block`   | **boolean** | Нет          | Если `true`, пользователь будет заблокирован в чате <br>Применяется только для чатов с публичной или приватной ссылкой <br>Игнорируется в остальных случаях |
+
+
+### Пример запроса {#request-example}  
+
+*Синхронный запрос:* 
+
+```python
+request = DeleteMemberReq(
+    chat_id=123456789,
+    user_id=55555,
+    block=true
+)
+bot.chats.delete_member(request)
+```
+
+*Асинхронный запрос:* 
+
+```python
+request = DeleteMemberReq(
+    chat_id=123456789,
+    user_id=55555,
+    block=true
+)
+await bot.chats.delete_member_async(request)
+```
+
+## Ответ {#response}
+
+### Поля ответа {#response-parameters}
+
+| Поле       | Тип         | Описание                                                          |
+|------------|-------------|-------------------------------------------------------------------|
+| `success`  | **boolean** | `true`, если запрос был успешным, `false` — в противном случае    |
+| `message`  | **string**  | Объяснительное сообщение, если результат не был успешным          |
+
+### Пример тела ответа {#response-example-body}
+
+```json
+{
+    "success": true
+}
+```
