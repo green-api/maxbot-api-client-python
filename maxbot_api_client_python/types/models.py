@@ -241,6 +241,8 @@ class Callback(MaxBotModel):
 class Update(MaxBotModel):
     update_type: UpdateType
     timestamp: int
+    payload: str | None = None
+    user: User | None = None
     callback: Callback | None = None
     message: Message | None = None
     message_id: str | None = None
